@@ -10,23 +10,23 @@ services:
       DATABASE_USER: "mi_usuario"
       DATABASE_PASSWORD: "mi_password"
       DATABASE_HOST: "db"
-      DATABASE_PORT: "5432"
+      DATABASE_PORT: "5434"
     depends_on:
       - db
     networks:
       - devnetwork
 
   db:
-    image: postgres:14
+    image: postgres:13
     ports:
-      - "5434:5432"
+      - "5434:5434"
     environment:
       POSTGRES_DB: mi_db
       POSTGRES_USER: mi_usuario
       POSTGRES_PASSWORD: mi_password
     volumes:
       - db_data:/var/lib/postgresql/data
-     # - ./init_db:/docker-entrypoint-initdb.d
+      - ./init_db:/docker-entrypoint-initdb.d
     networks:
       - devnetwork
 
