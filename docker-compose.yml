@@ -10,16 +10,16 @@ services:
       DATABASE_USER: "mi_usuario"
       DATABASE_PASSWORD: "mi_password"
       DATABASE_HOST: "db"
-      DATABASE_PORT: "5434"
+      DATABASE_PORT: "5432"
     depends_on:
       - db
     networks:
       - devnetwork
 
   db:
-    image: postgres:13
+    image: postgres:14
     ports:
-      - "5434:5434"
+      - "5434:5432"
     environment:
       POSTGRES_DB: mi_db
       POSTGRES_USER: mi_usuario
