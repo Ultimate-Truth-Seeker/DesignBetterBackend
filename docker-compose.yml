@@ -12,7 +12,7 @@ services:
       DATABASE_HOST: "db"
       DATABASE_PORT: "5432"
     depends_on:
-      - db:
+      db:
         condition: service_healthy
     networks:
       - devnetwork
