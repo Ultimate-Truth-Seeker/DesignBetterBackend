@@ -12,9 +12,16 @@ services:
       DATABASE_HOST: "db"
       DATABASE_PORT: "5432"
     depends_on:
-      - db
+      - db:
+        condition: service_healthy
     networks:
       - devnetwork
+    command: >
+      sh -c "
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
 
   db:
     image: postgres:14
@@ -27,6 +34,12 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./init_db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "mi_usuario", "-d", "mi_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
     networks:
       - devnetwork
 
