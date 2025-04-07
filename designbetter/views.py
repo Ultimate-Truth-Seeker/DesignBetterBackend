@@ -60,3 +60,69 @@ class ActivarCuentaView(APIView):
         except (BadSignature, Usuario.DoesNotExist):
             return Response({'detail': 'Token inválido o usuario no existe.'},
                             status=status.HTTP_400_BAD_REQUEST)
+
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+User = get_user_model()
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        email = request.data.get('correo_electronico')
+        if not email:
+            return Response({'error': 'Falta el correo_electronico'}, status=400)
+        
+        try:
+            user = User.objects.get(correo_electronico=email)
+        except User.DoesNotExist:
+            return Response({'message': 'Si el correo existe, se enviará un enlace de reseteo.'}, status=200)
+
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+
+        reset_link = f"http://localhost:3000/reset-password/{uid}/{token}/"  # FRONTEND URL
+
+        send_mail(
+            subject="Reseteo de contraseña",
+            message=f"Usa este link para resetear tu contraseña: {reset_link}",
+            from_email="no-reply@tusitio.com",
+            recipient_list=[email],
+        )
+
+        return Response({'message': 'Se ha enviado un correo si el usuario existe.'}, status=200)
+
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework import serializers
+
+class PasswordResetConfirmView(APIView):
+    class InputSerializer(serializers.Serializer):
+        uid = serializers.CharField()
+        token = serializers.CharField()
+        nueva_contraseña = serializers.CharField()
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        uid = serializer.validated_data['uid']
+        token = serializer.validated_data['token']
+        nueva_contraseña = serializer.validated_data['nueva_contraseña']
+
+        try:
+            uid = urlsafe_base64_decode(uid).decode()
+            user = User.objects.get(pk=uid)
+        except (User.DoesNotExist, ValueError, TypeError):
+            return Response({'error': 'Enlace inválido'}, status=400)
+
+        if not default_token_generator.check_token(user, token):
+            return Response({'error': 'Token inválido o expirado'}, status=400)
+
+        user.set_password(nueva_contraseña)
+        user.save()
+        return Response({'message': 'Contraseña actualizada con éxito'})
