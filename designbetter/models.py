@@ -40,5 +40,16 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     objects = UsuarioManager()
 
+    def save(self, *args, **kwargs):
+        # Si el rol es administrador, le damos permisos de superusuario
+        if self.rol == 'administrador':
+            self.is_staff = True
+            self.is_superuser = True
+            self.is_active = True  # Opcional: activarlo automáticamente
+        else:
+            self.is_staff = False
+            self.is_superuser = False
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.correo_electronico

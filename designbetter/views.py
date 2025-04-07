@@ -126,3 +126,12 @@ class PasswordResetConfirmView(APIView):
         user.set_password(nueva_contraseña)
         user.save()
         return Response({'message': 'Contraseña actualizada con éxito'})
+    
+# myapp/views.py
+from rest_framework import viewsets
+from .models import Usuario
+from .serializers import UsuarioSerializer
+
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
