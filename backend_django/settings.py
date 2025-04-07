@@ -157,3 +157,5 @@ EMAIL_HOST_PASSWORD = 'yrft ipff ofoh ohbo'
 
 CORS_ALLOW_ALL_ORIGINS = True  # o 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+
+FRONTEND_DOMAIN = "http://localhost:3000"

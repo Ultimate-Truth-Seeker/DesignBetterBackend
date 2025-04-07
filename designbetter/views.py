@@ -13,8 +13,15 @@ from django.conf import settings
 from .serializers import RegistroSerializer
 from .utils import generar_token_activacion
 
+from django.conf import settings
+
+
+from django.core.signing import BadSignature
+from django.core.signing import Signer
+
 class RegistroView(APIView):
     def post(self, request):
+        signer = Signer()
         serializer = RegistroSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()  # Crea el usuario (inactivo)
@@ -25,9 +32,13 @@ class RegistroView(APIView):
             # Crear la URL de activación
             # Suponiendo que tengas un path como: path('activate/<token>/', ActivarCuentaView.as_view(), ...)
             # O si lo quieres como query param, adaptarlo
-            url_activacion = request.build_absolute_uri(
-                reverse('activar_cuenta', kwargs={'token': token})
-            )
+            #url_activacion = request.build_absolute_uri(
+            #    reverse('activar_cuenta', kwargs={'token': token})
+            #)
+            correo_electronico = signer.unsign(token)
+
+            #ruta_relativa = reverse('activate', kwargs={'token': token})
+            url_activacion = f"{settings.FRONTEND_DOMAIN}/activate/{token}/"
 
             # Enviar el correo de activación
             asunto = 'Activa tu cuenta'
@@ -42,8 +53,7 @@ class RegistroView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-from django.core.signing import BadSignature
-from django.core.signing import Signer
+
 
 class ActivarCuentaView(APIView):
     def get(self, request, token):
