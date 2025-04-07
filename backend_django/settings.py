@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'designbetter',
     'rest_framework',
+    "corsheaders",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+
 ]
 
 ROOT_URLCONF = 'backend_django.urls'
@@ -151,3 +154,6 @@ EMAIL_USE_TLS = True  # Activa TLS para conexiones seguras
 
 EMAIL_HOST_USER = 'equipodedesignbetter@gmail.com'
 EMAIL_HOST_PASSWORD = 'yrft ipff ofoh ohbo'
+
+CORS_ALLOW_ALL_ORIGINS = True  # o 
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
