@@ -16,16 +16,19 @@ Este repositorio contiene el backend de la plataforma **Design Better**, una sol
 
 ## Estructura del Repositorio
 
-La siguiente estructura permite comprender rápidamente la organización del proyecto:
+A continuación se muestra la estructura principal del repositorio y una breve descripción de cada archivo o carpeta:
 
 ```
 DesignBetterBackend/
-├── docker-compose.yml         # Archivo principal de orquestación de contenedores
-├── Dockerfile                 # Instrucciones para construir la imagen Docker de Django
-├── src/                       # Código fuente del backend (apps, modelos, vistas, urls, etc.)
-├── docs/                      # Documentación interna adicional
-├── tests/                     # Pruebas automatizadas del backend
-└── README.md                  # Instrucciones generales del proyecto
+├── backend_django/           # Aplicación principal de Django
+├── designbetter/             # Configuración del proyecto Django (settings, urls, wsgi, etc.)
+├── init_db/                  # Scripts de inicialización de base de datos
+├── Dockerfile                # Instrucciones para construir la imagen Docker
+├── docker-compose.yml        # Orquestación de contenedores (Django, base de datos, etc.)
+├── manage.py                 # Script de administración de Django
+├── requirements.txt          # Dependencias del proyecto
+├── LICENSE                   # Licencia del proyecto
+└── README.md                 # Documentación principal
 ```
 
 ---
@@ -37,7 +40,8 @@ Antes de construir y ejecutar el proyecto, asegúrese de tener instalado lo sigu
 - **Docker:** Versión 20.10 o superior.
 - **Docker Compose:** Compatible con la versión de Docker instalada.
 - **Git:** Para clonar el repositorio.
-- Se recomienda configurar un archivo `.env` basado en el archivo `.env.example` si está disponible.
+
+> Nota: Puede ser necesario configurar un archivo `.env` si el sistema lo requiere.
 
 ---
 
@@ -61,13 +65,11 @@ Siga estos pasos para construir y levantar el entorno del backend usando contene
    docker compose up -d
    ```
 
-Esto iniciará el contenedor del backend y cualquier otro servicio definido en `docker-compose.yml` (como base de datos, etc.).
+Esto iniciará el contenedor del backend de Django y cualquier otro servicio definido en `docker-compose.yml`.
 
 ---
 
 ## Administración de Contenedores
-
-Para detener o eliminar los contenedores y recursos asociados, utilice los siguientes comandos:
 
 ### Detener los Contenedores
 ```bash
@@ -81,13 +83,25 @@ docker compose down --rmi all --volumes --remove-orphans
 
 ---
 
-## Otros Comandos Útiles
+## Comandos Útiles para el Desarrollo
 
 - **Ver Logs del Backend:**
   ```bash
   docker compose logs -f
   ```
 
+- **Ejecutar Migraciones de Django:**
+  ```bash
+  docker compose exec web python manage.py migrate
+  ```
+
+- **Crear Superusuario (Administrador):**
+  ```bash
+  docker compose exec web python manage.py createsuperuser
+  ```
+
 ---
 
-Este proyecto está diseñado para facilitar la colaboración en equipo mediante contenedores, asegurando entornos consistentes y facilidad de despliegue en distintos sistemas. Cualquier contribución o sugerencia puede registrarse en la sección de Issues del repositorio.
+## Notas Finales
+
+Este proyecto está diseñado para facilitar la colaboración en equipo mediante contenedores, asegurando entornos consistentes y facilidad de despliegue. Para cualquier duda o contribución, utiliza la sección de Issues del repositorio.
