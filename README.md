@@ -99,7 +99,5 @@ docker compose down --rmi all --volumes --remove-orphans
 - **Documentación Interna:**  
   Revise la carpeta `/docs` para obtener información más detallada sobre la configuración, dependencias y otros aspectos relevantes del proyecto.
 
----
 
 Con esta estructura y documentación, se busca facilitar el desarrollo, despliegue y mantenimiento del proyecto, asegurando claridad y un flujo de trabajo eficiente para todos los colaboradores.
-```
