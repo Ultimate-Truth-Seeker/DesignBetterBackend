@@ -81,24 +81,6 @@ docker compose down
 docker compose down --rmi all --volumes --remove-orphans
 ```
 
----
-
-## Comandos Útiles para el Desarrollo
-
-- **Ver Logs del Backend:**
-  ```bash
-  docker compose logs -f
-  ```
-
-- **Ejecutar Migraciones de Django:**
-  ```bash
-  docker compose exec web python manage.py migrate
-  ```
-
-- **Crear Superusuario (Administrador):**
-  ```bash
-  docker compose exec web python manage.py createsuperuser
-  ```
 
 ---
 
