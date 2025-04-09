@@ -29,3 +29,17 @@ Por favor, siga los siguientes pasos para construir y ejecutar los contenedores 
    En la carpeta del backend del proyecto ejecute:
    ```cmd
    docker compose up -d
+
+## Contenedores - Detención y Eliminación
+
+Por favor, utilice los siguientes comandos para facilitar la gestión de los contenedores Docker correspondientes al proyecto:
+
+1. **Detener los contenedores**  
+   En la terminal ejecute:
+   ```cmd
+   docker compose down
+
+2. **Eliminar contenedores, imágenes y volúmenes**  
+   Ejecute:
+   ```cmd
+   docker compose down --rmi all --volumes --remove-orphans
