@@ -88,16 +88,6 @@ docker compose down --rmi all --volumes --remove-orphans
   docker compose logs -f
   ```
 
-- **Ejecutar Migraciones de Django:**
-  ```bash
-  docker compose exec web python manage.py migrate
-  ```
-
-- **Crear Superusuario (administrador):**
-  ```bash
-  docker compose exec web python manage.py createsuperuser
-  ```
-
 ---
 
 Este proyecto está diseñado para facilitar la colaboración en equipo mediante contenedores, asegurando entornos consistentes y facilidad de despliegue en distintos sistemas. Cualquier contribución o sugerencia puede registrarse en la sección de Issues del repositorio.
