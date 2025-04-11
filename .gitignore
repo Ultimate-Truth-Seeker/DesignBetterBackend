@@ -1,0 +1,55 @@
+### Django ###
+__pycache__/
+*.py[cod]
+*.log
+local_settings.py
+settings/local.py
+/media
+/staticfiles
+*.pot
+*.mo
+
+# Migraciones (opcional)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+### PostgreSQL ###
+/postgres_data  # Volumen local de PostgreSQL
+*.dump
+*.backup
+
+### Docker ###
+.env
+.env.*
+docker-compose.override.yml
+.env.dev
+.env.prod
+.env.test
+
+### Python ###
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+ENV/
+env/
+.Python
+pip-wheel-metadata/
+.coverage
+htmlcov/
+.pytest_cache/
+
+### IDE ###
+.idea/
+.vscode/
+*.swp
+*.sublime-*
+.DS_Store
+Thumbs.db
+
+### Archivos temporales ###
+*.bak
+*.tmp
+*.pid
+*.pyc
