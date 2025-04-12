@@ -22,5 +22,6 @@ urlpatterns = [
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset_api'),
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_api'),
     path('api/', include(router.urls)),
+    path('auth/', include('social_django.urls', namespace='social')),
 
 ]
