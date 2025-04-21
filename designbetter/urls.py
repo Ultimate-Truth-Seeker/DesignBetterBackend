@@ -6,33 +6,14 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 
-from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet
-from dj_rest_auth.registration.views import SocialLoginView
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        kwargs['context'] = self.get_serializer_context()
-        data = self.request.data.copy()
-
-        # Si viene como "access_token", lo mapeamos como id_token
-        if "access_token" in data and "id_token" not in data:
-            data["id_token"] = data["access_token"]
-
-        kwargs['data'] = data
-        return serializer_class(*args, **kwargs)
-
-class FacebookLogin(SocialLoginView):
-    adapter_class = FacebookOAuth2Adapter
+from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin
 
 
 router = DefaultRouter()
 router.register(r'usuarios', UsuarioViewSet)
 
 urlpatterns = [
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register/', RegistroView.as_view(), name='register'),
     path('activate/<token>/', ActivarCuentaView.as_view(), name='activar_cuenta'),

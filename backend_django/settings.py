@@ -158,6 +158,11 @@ REST_FRAMEWORK = {
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
 }
+# settings.py
+REST_AUTH_SERIALIZERS = {
+    'JWT_SERIALIZER': 'designbetter.serializers.CustomJWTSerializer',
+}
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -244,5 +249,7 @@ SOCIALACCOUNT_AUTO_SIGNUP = True  # <-- importante para que no se quede colgado 
 DJ_REST_AUTH = {
     'USE_JWT': True,
 }
+REST_USE_JWT = True
+
 JWT_AUTH_COOKIE = 'access_token'
 

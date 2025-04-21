@@ -145,3 +145,51 @@ from .serializers import UsuarioSerializer
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+from dj_rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        data = self.request.data.copy()
+
+        # Si viene como "access_token", lo mapeamos como id_token
+        if "access_token" in data and "id_token" not in data:
+            data["id_token"] = data["access_token"]
+
+        kwargs['data'] = data
+        return serializer_class(*args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        user = self.user
+
+        # Generar tokens JWT manualmente
+        refresh = RefreshToken.for_user(user)
+        refresh['rol'] = user.rol
+        refresh['nombre'] = user.nombre
+        refresh['email'] = user.correo_electronico
+
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'email': user.correo_electronico,
+                'nombre': user.nombre,
+                'rol': user.rol,
+            }
+        })
+
+class FacebookLogin(SocialLoginView):
+    adapter_class = FacebookOAuth2Adapter
