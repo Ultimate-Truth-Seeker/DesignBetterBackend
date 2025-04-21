@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{% trans 'Site administration' %}</h1>
+
+  <!-- Botón personalizado -->
+  <div style="margin-bottom: 20px;">
+    <a href="{% url 'admin:estadisticas' %}" 
+       style="font-size: 1.2rem; font-weight: bold; background: #e0e0e0; padding: 10px 15px; border-radius: 5px; display: inline-block;">
+      📊 Ver panel de estadísticas
+    </a>
+  </div>
+
+  <!-- Contenido original -->
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
+{% endblock %}

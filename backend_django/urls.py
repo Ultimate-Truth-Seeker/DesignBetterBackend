@@ -19,9 +19,9 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-
+from designbetter.admin import admin_site
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),
     path('accounts/', include('allauth.urls')),  # interfaz de allauth
     path('social/', include('allauth.socialaccount.urls')),  # endpoints de redes sociales
     path('auth/', include('designbetter.urls')),
