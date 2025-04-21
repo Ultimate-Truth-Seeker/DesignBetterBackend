@@ -22,7 +22,8 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path('accounts/', include('allauth.urls')),  # interfaz de allauth
+    path('social/', include('allauth.socialaccount.urls')),  # endpoints de redes sociales
     path('auth/', include('designbetter.urls')),
 ]
 

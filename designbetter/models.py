@@ -36,6 +36,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'correo_electronico'
+    EMAIL_FIELD = 'correo_electronico'
     REQUIRED_FIELDS = ['nombre']
 
     objects = UsuarioManager()

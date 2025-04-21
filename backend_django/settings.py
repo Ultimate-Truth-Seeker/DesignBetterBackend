@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
+    "allauth.account.middleware.AccountMiddleware"
 
 ]
 
@@ -180,6 +182,8 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 # Google OAuth2
@@ -223,12 +227,22 @@ SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
 SOCIAL_AUTH_STORAGE = 'social_django.models.DjangoStorage'
 
 SITE_ID = 1
+ACCOUNT_USER_MODEL_EMAIL_FIELD = 'correo_electronico'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # "none", "optional" o "mandatory"
+  # "none", "optional" o "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "optional"
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False  # si tu modelo no maneja username
+SOCIALACCOUNT_AUTO_SIGNUP = True  # <-- importante para que no se quede colgado esperando email
 
 DJ_REST_AUTH = {
     'USE_JWT': True,
 }
+JWT_AUTH_COOKIE = 'access_token'
+

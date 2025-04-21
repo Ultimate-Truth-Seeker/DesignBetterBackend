@@ -7,6 +7,25 @@ from rest_framework_simplejwt.views import (
 from rest_framework.routers import DefaultRouter
 
 from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet
+from dj_rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        data = self.request.data.copy()
+
+        # Si viene como "access_token", lo mapeamos como id_token
+        if "access_token" in data and "id_token" not in data:
+            data["id_token"] = data["access_token"]
+
+        kwargs['data'] = data
+        return serializer_class(*args, **kwargs)
+
+class FacebookLogin(SocialLoginView):
+    adapter_class = FacebookOAuth2Adapter
 
 
 router = DefaultRouter()
@@ -21,7 +40,6 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset_api'),
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_api'),
-    path('api/', include(router.urls)),
-    path('auth/', include('social_django.urls', namespace='social')),
+    path('social/google/', GoogleLogin.as_view(), name='google_login'),
 
 ]
