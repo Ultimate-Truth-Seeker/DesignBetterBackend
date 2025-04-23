@@ -1,6 +1,81 @@
 {% extends "admin/base_site.html" %}
 {% block content %}
 
+<h1>📊 Estadísticas de Usuarios</h1>
+<p>Fecha actual: {{ ahora }}</p>
+
+<!-- TARJETAS RESUMEN -->
+<div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+  <div style="background: #f1f1f1; padding: 1rem; border-radius: 8px;">
+    <h2>{{ total_usuarios }}</h2>
+    <p>Total de usuarios</p>
+  </div>
+  <div style="background: #f1f1f1; padding: 1rem; border-radius: 8px;">
+    <h2>{{ activos }}</h2>
+    <p>Usuarios activos</p>
+  </div>
+  <div style="background: #f1f1f1; padding: 1rem; border-radius: 8px;">
+    <h2>{{ autenticados }}</h2>
+    <p>Usuarios que han iniciado sesión</p>
+  </div>
+  <div style="background: #f1f1f1; padding: 1rem; border-radius: 8px;">
+    <h2>{{ nuevos_recientes }}</h2>
+    <p>Nuevos en los últimos 7 días</p>
+  </div>
+</div>
+
+<!-- GRÁFICO DE BARRAS -->
+<h2>Usuarios registrados por mes</h2>
+<canvas id="graficoMes" height="100"></canvas>
+
+<!-- GRÁFICO DE PASTEL -->
+<h2>Usuarios por proveedor social</h2>
+<canvas id="graficoProveedor" height="100"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Datos para usuarios por mes
+  const labelsMes = [{% for item in usuario_por_mes %}"{{ item.mes|date:'M Y' }}",{% endfor %}];
+  const dataMes = [{% for item in usuario_por_mes %}{{ item.total }},{% endfor %}];
+
+  new Chart(document.getElementById('graficoMes'), {
+    type: 'bar',
+    data: {
+      labels: labelsMes,
+      datasets: [{
+        label: 'Usuarios por mes',
+        data: dataMes,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Datos para usuarios por proveedor
+  const labelsProveedor = [{% for item in usuario_por_proveedor %}"{{ item.provider|capfirst }}",{% endfor %}];
+  const dataProveedor = [{% for item in usuario_por_proveedor %}{{ item.total }},{% endfor %}];
+
+  new Chart(document.getElementById('graficoProveedor'), {
+    type: 'pie',
+    data: {
+      labels: labelsProveedor,
+      datasets: [{
+        label: 'Usuarios por proveedor',
+        data: dataProveedor
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+</script>
 
 {% endblock %}
   
