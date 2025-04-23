@@ -53,6 +53,13 @@ class MiAdmin(admin.AdminSite):
 admin_site = MiAdmin(name='miadmin')
 
 admin_site.register(Usuario)
+admin_site.register(UsuarioManager)
+admin_site.register(PatronBase)
+admin_site.register(PlantillaPrenda)
+admin_site.register(Material)
+admin_site.register(PlantillaMaterial)
+admin_site.register(PartePatron)
+
 #TODO 
 
 
