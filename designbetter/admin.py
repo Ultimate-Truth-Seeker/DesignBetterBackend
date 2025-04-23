@@ -1,8 +1,12 @@
 from django.contrib import admin
 from .models import Usuario
+from .models import PatronBase
+from .models import PlantillaPrenda
+from .models import Material
+from .models import PlantillaMaterial
+from .models import PartePatron
 
 #admin.site.register(Usuario)
-
 
 from django.urls import path
 from django.template.response import TemplateResponse
@@ -53,7 +57,6 @@ class MiAdmin(admin.AdminSite):
 admin_site = MiAdmin(name='miadmin')
 
 admin_site.register(Usuario)
-admin_site.register(UsuarioManager)
 admin_site.register(PatronBase)
 admin_site.register(PlantillaPrenda)
 admin_site.register(Material)
