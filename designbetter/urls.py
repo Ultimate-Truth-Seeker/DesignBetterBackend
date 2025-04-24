@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 
-from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin
+from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin, AsignarRolView
 
 
 router = DefaultRouter()
@@ -23,4 +23,5 @@ urlpatterns = [
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_api'),
     path('social/google/', GoogleLogin.as_view(), name='google_login'),
 
+    path("asignar-rol/", AsignarRolView.as_view(), name="asignar-rol"),
 ]

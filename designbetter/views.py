@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.core.mail import send_mail
@@ -193,3 +194,29 @@ class GoogleLogin(SocialLoginView):
 
 class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
+
+
+class AsignarRolView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        usuario = request.user
+        nuevo_rol = request.data.get("rol")
+
+        # Verificamos si ya tiene un rol
+        if usuario.rol:
+            return Response({"error": "El rol ya ha sido asignado."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not nuevo_rol:
+            return Response({"error": "Debes proporcionar un rol."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validación del rol (si usas choices o tabla de roles)
+        ROLES_VALIDOS = ["cliente", "diseñador"]
+        if nuevo_rol not in ROLES_VALIDOS:
+            return Response({"error": "Rol inválido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Asignamos el rol
+        usuario.rol = nuevo_rol
+        usuario.save()
+
+        return Response({"mensaje": f"Rol '{nuevo_rol}' asignado correctamente."}, status=status.HTTP_200_OK)

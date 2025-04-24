@@ -25,6 +25,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         ('diseñador', 'Diseñador'),
         ('cliente', 'Cliente'),
         ('administrador', 'Administrador'),
+        ('', '')
     ]
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -43,9 +44,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs):
         # Si el rol es administrador, le damos permisos de superusuario
-        if self.rol == 'administrador':
-            self.is_staff = True
-            self.is_superuser = True
+        if self.is_staff and self.is_superuser:
+            self.rol = "administrador"
             self.is_active = True  # Opcional: activarlo automáticamente
         else:
             self.is_staff = False
