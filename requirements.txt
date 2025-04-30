@@ -8,3 +8,5 @@ python-social-auth==0.3.6
 requests==2.31.0
 dj-rest-auth==7.0.1
 django-allauth==65.7.0
+ezdxf==1.4.1
+svgwrite==1.4.3
