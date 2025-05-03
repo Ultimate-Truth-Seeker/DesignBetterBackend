@@ -253,3 +253,5 @@ REST_USE_JWT = True
 
 JWT_AUTH_COOKIE = 'access_token'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

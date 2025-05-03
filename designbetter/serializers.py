@@ -68,3 +68,10 @@ class CustomJWTSerializer(JWTSerializer):
         data['access'] = str(refresh.access_token)
         data['refresh'] = str(refresh)
         return data
+
+from .models import DxfFile
+
+class DxfFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DxfFile
+        fields = ['id', 'name', 'file', 'uploaded_at']

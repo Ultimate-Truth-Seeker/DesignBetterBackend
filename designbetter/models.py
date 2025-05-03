@@ -105,3 +105,8 @@ class PartePatron(models.Model):
 
     def _str_(self):
         return f"{self.nombre_parte} ({self.patron_base.nombre})"
+    
+class DxfFile(models.Model):
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='dxf_files/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)

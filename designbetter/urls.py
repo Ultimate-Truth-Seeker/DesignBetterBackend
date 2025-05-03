@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 
-from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin, AsignarRolView
+from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin, AsignarRolView, DxfFileUploadView
 
 
 router = DefaultRouter()
@@ -24,4 +24,6 @@ urlpatterns = [
     path('social/google/', GoogleLogin.as_view(), name='google_login'),
 
     path("asignar-rol/", AsignarRolView.as_view(), name="asignar-rol"),
+    path('upload-dxf/', DxfFileUploadView.as_view(), name='upload-dxf'),
+
 ]

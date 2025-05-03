@@ -11,7 +11,7 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
 
-from .serializers import RegistroSerializer
+from .serializers import RegistroSerializer, DxfFileSerializer
 from .utils import generar_token_activacion
 
 from django.conf import settings
@@ -220,3 +220,13 @@ class AsignarRolView(APIView):
         usuario.save()
 
         return Response({"mensaje": f"Rol '{nuevo_rol}' asignado correctamente."}, status=status.HTTP_200_OK)
+    
+from .models import DxfFile
+
+class DxfFileUploadView(APIView):
+    def post(self, request):
+        serializer = DxfFileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
