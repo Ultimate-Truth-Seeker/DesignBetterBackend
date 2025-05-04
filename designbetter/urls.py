@@ -8,9 +8,12 @@ from rest_framework.routers import DefaultRouter
 
 from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin, AsignarRolView, DxfFileUploadView
 
+from rest_framework.routers import DefaultRouter
+from .views import PatronBaseViewSet, PartePatronViewSet
 
 router = DefaultRouter()
-router.register(r'usuarios', UsuarioViewSet)
+router.register(r'patrones', PatronBaseViewSet)
+router.register(r'partes', PartePatronViewSet)
 
 urlpatterns = [
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -25,5 +28,8 @@ urlpatterns = [
 
     path("asignar-rol/", AsignarRolView.as_view(), name="asignar-rol"),
     path('upload-dxf/', DxfFileUploadView.as_view(), name='upload-dxf'),
+    
+    path('', include(router.urls)),
+
 
 ]

@@ -230,3 +230,14 @@ class DxfFileUploadView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from .models import PatronBase, PartePatron
+from .serializers import PatronBaseSerializer, PartePatronSerializer
+
+class PatronBaseViewSet(viewsets.ModelViewSet):
+    queryset = PatronBase.objects.all()
+    serializer_class = PatronBaseSerializer
+
+class PartePatronViewSet(viewsets.ModelViewSet):
+    queryset = PartePatron.objects.all()
+    serializer_class = PartePatronSerializer

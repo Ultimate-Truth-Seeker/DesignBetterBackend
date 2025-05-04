@@ -75,3 +75,17 @@ class DxfFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DxfFile
         fields = ['id', 'name', 'file', 'uploaded_at']
+
+from .models import PatronBase, PartePatron
+
+class PartePatronSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PartePatron
+        fields = '__all__'
+
+class PatronBaseSerializer(serializers.ModelSerializer):
+    partes = PartePatronSerializer(many=True, read_only=True)  # Relación inversa
+
+    class Meta:
+        model = PatronBase
+        fields = '__all__'
