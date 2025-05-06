@@ -241,3 +241,40 @@ class PatronBaseViewSet(viewsets.ModelViewSet):
 class PartePatronViewSet(viewsets.ModelViewSet):
     queryset = PartePatron.objects.all()
     serializer_class = PartePatronSerializer
+
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import PatronBase, Material
+from .serializers import PatronBaseSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+
+class CrearPatronView(generics.CreateAPIView):
+    """
+    Vista para crear patrones con partes anidadas y materiales.
+    Requiere autenticación JWT.
+    """
+    queryset = PatronBase.objects.all()
+    serializer_class = PatronBaseSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # Para manejar archivos
+
+    def perform_create(self, serializer):
+        # Asigna automáticamente el usuario logeado como creador
+        serializer.save(creado_por=self.request.user)
+
+class ListarPatronesView(generics.ListAPIView):
+    """
+    Vista para listar patrones con filtros básicos.
+    """
+    serializer_class = PatronBaseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = PatronBase.objects.all()
+        
+        # Filtros opcionales (ej: /api/patrones/?tipo_prenda=camisa)
+        tipo_prenda = self.request.query_params.get('tipo_prenda')
+        if tipo_prenda:
+            queryset = queryset.filter(tipo_prenda=tipo_prenda)
+            
+        return queryset

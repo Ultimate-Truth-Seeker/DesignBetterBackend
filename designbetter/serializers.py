@@ -1,13 +1,12 @@
-# accounts/serializers.py
-
-# tu_app/serializers.py
-
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from dj_rest_auth.serializers import JWTSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Usuario, DxfFile, PatronBase, PartePatron, Material
 
-Usuario = get_user_model()
-
+# --- Serializadores existentes (mantén estos) ---
 class RegistroSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -16,7 +15,6 @@ class RegistroSerializer(serializers.ModelSerializer):
         fields = ('correo_electronico', 'nombre', 'password', 'rol')
 
     def create(self, validated_data):
-        # Asignamos is_active=False para requerir confirmación de correo
         user = Usuario.objects.create_user(
             correo_electronico=validated_data['correo_electronico'],
             nombre=validated_data['nombre'],
@@ -27,32 +25,19 @@ class RegistroSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-from rest_framework import serializers
-from .models import Usuario
-
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = '__all__'
 
-# en tu archivo serializers.py
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-
-        # Agrega campos personalizados al token
-        token['email'] = user.correo_electronico  # o user.email, según tu modelo
+        token['email'] = user.correo_electronico
         token['rol'] = user.rol
         token['nombre'] = user.nombre
-
         return token
-
-# serializers.py
-from dj_rest_auth.serializers import JWTSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
 
 class CustomJWTSerializer(JWTSerializer):
     def get_token(self, user):
@@ -69,23 +54,59 @@ class CustomJWTSerializer(JWTSerializer):
         data['refresh'] = str(refresh)
         return data
 
-from .models import DxfFile
-
 class DxfFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DxfFile
         fields = ['id', 'name', 'file', 'uploaded_at']
 
-from .models import PatronBase, PartePatron
+# --- Serializadores NUEVOS/Modificados para Patrones ---
+class MedidasField(serializers.Field):
+    """Campo personalizado para validar medidas en formato JSON"""
+    def to_representation(self, value):
+        return value
+    
+    def to_internal_value(self, data):
+        if not isinstance(data, dict):
+            raise serializers.ValidationError("Las medidas deben ser un objeto JSON")
+        return data
 
 class PartePatronSerializer(serializers.ModelSerializer):
+    medidas = MedidasField()
+
     class Meta:
         model = PartePatron
-        fields = '__all__'
+        fields = ['nombre_parte', 'medidas', 'observaciones']
 
 class PatronBaseSerializer(serializers.ModelSerializer):
-    partes = PartePatronSerializer(many=True, read_only=True)  # Relación inversa
+    partes = PartePatronSerializer(many=True)
+    materiales = serializers.PrimaryKeyRelatedField(
+        queryset=Material.objects.all(),
+        many=True,
+        required=False
+    )
+    archivo_patron = serializers.FileField(required=True)  # Cambiado de CharField a FileField
 
     class Meta:
         model = PatronBase
-        fields = '__all__'
+        fields = [
+            'id', 'nombre', 'tipo_prenda', 'genero', 
+            'tallas_disponibles', 'observaciones', 
+            'archivo_patron', 'partes', 'materiales',
+            'creado_por', 'fecha_creacion'
+        ]
+        read_only_fields = ('creado_por', 'fecha_creacion')
+        extra_kwargs = {
+            'tallas_disponibles': {'required': True}
+        }
+
+    def create(self, validated_data):
+        partes_data = validated_data.pop('partes', [])
+        materiales_data = validated_data.pop('materiales', [])
+        
+        patron = PatronBase.objects.create(**validated_data)
+        patron.materiales.set(materiales_data)
+        
+        for parte_data in partes_data:
+            PartePatron.objects.create(patron_base=patron, **parte_data)
+        
+        return patron
