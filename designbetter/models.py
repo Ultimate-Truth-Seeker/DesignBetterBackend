@@ -101,6 +101,7 @@ class PartePatron(models.Model):
     patron_base = models.ForeignKey(PatronBase, on_delete=models.CASCADE, related_name='partes')
     nombre_parte = models.CharField(max_length=50)  # Ej: "Manga", "Cuello"
     medidas = models.JSONField(blank=True, null=True)  # Ej: {"largo": 60, "ancho": 20}
+    geometria = models.JSONField(blank=True, null=True)
     observaciones = models.TextField(blank=True)
 
     def _str_(self):

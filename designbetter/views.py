@@ -241,3 +241,17 @@ class PatronBaseViewSet(viewsets.ModelViewSet):
 class PartePatronViewSet(viewsets.ModelViewSet):
     queryset = PartePatron.objects.all()
     serializer_class = PartePatronSerializer
+
+from django.http import HttpResponse, Http404
+from .utils import convert_dxf_to_svg, generar_svg_para_patron
+def patron_svg_view(request, patron_id):
+    try:
+        patron = PatronBase.objects.get(id=patron_id)
+    except PatronBase.DoesNotExist:
+        raise Http404("Patrón no encontrado")
+
+    if patron.archivo_patron.endswith(".dxf"):
+        svg_string = convert_dxf_to_svg(patron.archivo_patron)
+    else:
+        svg_string = generar_svg_para_patron(patron_id)
+    return HttpResponse(svg_string, content_type="image/svg+xml")

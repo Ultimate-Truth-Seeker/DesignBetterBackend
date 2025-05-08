@@ -10,6 +10,7 @@ from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, Pa
 
 from rest_framework.routers import DefaultRouter
 from .views import PatronBaseViewSet, PartePatronViewSet
+from . import views
 
 router = DefaultRouter()
 router.register(r'patrones', PatronBaseViewSet)
@@ -30,6 +31,6 @@ urlpatterns = [
     path('upload-dxf/', DxfFileUploadView.as_view(), name='upload-dxf'),
     
     path('', include(router.urls)),
-
+    path('api/patron/<int:patron_id>/svg/', views.patron_svg_view, name='patron_svg'),
 
 ]
