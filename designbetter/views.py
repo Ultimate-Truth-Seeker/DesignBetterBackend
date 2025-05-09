@@ -292,3 +292,9 @@ class ListarPatronesView(generics.ListAPIView):
             queryset = queryset.filter(tipo_prenda=tipo_prenda)
             
         return queryset
+from .models import PlantillaPrenda
+from .serializers import PlantillaPrendaSerializer
+
+class PlantillaPrendaViewSet(viewsets.ModelViewSet):
+    queryset = PlantillaPrenda.objects.all().prefetch_related('materiales', 'patron_base__partes')
+    serializer_class = PlantillaPrendaSerializer

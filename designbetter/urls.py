@@ -6,11 +6,11 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 from .views import (
+    PlantillaPrendaViewSet,
     RegistroView, 
     ActivarCuentaView, 
     PasswordResetRequestView, 
     PasswordResetConfirmView, 
-    UsuarioViewSet, 
     CustomTokenObtainPairView, 
     GoogleLogin, 
     FacebookLogin,  # Añadido para consistencia
@@ -25,6 +25,7 @@ from . import views
 router = DefaultRouter()
 router.register(r'patrones', PatronBaseViewSet, basename='patrones')  # Añadido basename
 router.register(r'partes', PartePatronViewSet, basename='partes')
+router.register(r'plantillas', PlantillaPrendaViewSet)
 
 urlpatterns = [
     # Autenticación JWT

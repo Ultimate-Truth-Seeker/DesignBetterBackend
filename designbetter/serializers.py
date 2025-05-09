@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from dj_rest_auth.serializers import JWTSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Usuario, DxfFile, PatronBase, PartePatron, Material
+from .models import Usuario, DxfFile, PatronBase, PartePatron, Material, PlantillaMaterial, PlantillaPrenda
 Usuario = get_user_model()
 
 # --- Serializadores existentes (mantén estos) ---
@@ -111,3 +111,33 @@ class PatronBaseSerializer(serializers.ModelSerializer):
             PartePatron.objects.create(patron_base=patron, **parte_data)
         
         return patron
+
+class MaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Material
+        fields = '__all__'
+
+class PlantillaMaterialSerializer(serializers.ModelSerializer):
+    material = MaterialSerializer(read_only=True)
+
+    class Meta:
+        model = PlantillaMaterial
+        fields = ['material']
+
+class PlantillaPrendaSerializer(serializers.ModelSerializer):
+    patron_base = PatronBaseSerializer(read_only=True)
+    patron_base_id = serializers.PrimaryKeyRelatedField(
+        queryset=PatronBase.objects.all(), source='patron_base', write_only=True, required=False
+    )
+    materiales = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PlantillaPrenda
+        fields = [
+            'id', 'nombre', 'descripcion', 'tipo_ropa', 'tipo_cuerpo',
+            'patron_base', 'patron_base_id', 'materiales'
+        ]
+
+    def get_materiales(self, obj):
+        materiales = PlantillaMaterial.objects.filter(plantilla=obj)
+        return PlantillaMaterialSerializer(materiales, many=True).data
