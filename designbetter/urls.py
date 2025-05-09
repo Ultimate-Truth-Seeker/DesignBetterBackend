@@ -5,31 +5,52 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework.routers import DefaultRouter
-
-from .views import RegistroView, ActivarCuentaView, PasswordResetRequestView, PasswordResetConfirmView, UsuarioViewSet, CustomTokenObtainPairView, GoogleLogin, AsignarRolView, DxfFileUploadView
-
-from rest_framework.routers import DefaultRouter
-from .views import PatronBaseViewSet, PartePatronViewSet
+from .views import (
+    RegistroView, 
+    ActivarCuentaView, 
+    PasswordResetRequestView, 
+    PasswordResetConfirmView, 
+    UsuarioViewSet, 
+    CustomTokenObtainPairView, 
+    GoogleLogin, 
+    FacebookLogin,  # Añadido para consistencia
+    AsignarRolView, 
+    DxfFileUploadView,
+    PatronBaseViewSet, 
+    PartePatronViewSet,
+    ListarPatronesView  # Nueva vista para filtros
+)
 from . import views
 
 router = DefaultRouter()
-router.register(r'patrones', PatronBaseViewSet)
-router.register(r'partes', PartePatronViewSet)
+router.register(r'patrones', PatronBaseViewSet, basename='patrones')  # Añadido basename
+router.register(r'partes', PartePatronViewSet, basename='partes')
 
 urlpatterns = [
+    # Autenticación JWT
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
+    # Registro y activación
     path('register/', RegistroView.as_view(), name='register'),
     path('activate/<token>/', ActivarCuentaView.as_view(), name='activar_cuenta'),
-    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    
+    # Password reset
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset_api'),
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_api'),
+    
+    # Social Auth
     path('social/google/', GoogleLogin.as_view(), name='google_login'),
-
-    path("asignar-rol/", AsignarRolView.as_view(), name="asignar-rol"),
+    path('social/facebook/', FacebookLogin.as_view(), name='facebook_login'),  # Añadido
+    
+    # Roles y archivos
+    path('asignar-rol/', AsignarRolView.as_view(), name='asignar-rol'),
     path('upload-dxf/', DxfFileUploadView.as_view(), name='upload-dxf'),
     
+    # API adicional para patrones (filtros personalizados)
+    path('patrones/listar/', ListarPatronesView.as_view(), name='listar-patrones'),
+    
+    # Router URLs (patrones/, partes/, usuarios/)
     path('', include(router.urls)),
     path('api/patron/<int:patron_id>/svg/', views.patron_svg_view, name='patron_svg'),
 
