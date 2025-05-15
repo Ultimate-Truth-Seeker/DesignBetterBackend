@@ -1,4 +1,4 @@
-# Sprint Scrum II - Proyecto - Ingeniería Software I - Backend
+# Sprint Scrum III - Proyecto - Ingeniería Software I - Backend
 
 Este repositorio contiene el backend de la plataforma **Design Better**, una solución innovadora para el diseño y personalización de moda. La plataforma busca facilitar a diseñadores y clientes la creación, simulación y personalización de prendas, optimizando el flujo de trabajo y mejorando la experiencia de usuario. Desarrollado con Django e integrado con Docker, el sistema ofrece un entorno robusto, seguro y escalable para un desarrollo ágil.
 
@@ -7,11 +7,10 @@ Este repositorio contiene el backend de la plataforma **Design Better**, una sol
 ## Documentación y Recursos
 
 - **Historial de Versiones:**  
-  [Historial de versiones y documentación](https://uvggt-my.sharepoint.com/:w:/g/personal/men23975_uvg_edu_gt/EbODmOJHdNlCt-gt0UDzqIkBXOH8IjRcJTD1jZfejYkbuA
-)
+  https://uvggt-my.sharepoint.com/:w:/r/personal/pal23933_uvg_edu_gt/Documents/Sprint%20III.docx?d=w753cba969dd14aefb4ef0ec3c3154096&csf=1&web=1&e=6Cd6y0
 
 - **Presentación de la Entrega:**  
-  [Accede a la presentación en Canva](https://www.canva.com/design/DAGlgSqIQfA/FL8fKKLI_ODLVjm9HwMP-w/edit?utm_content=DAGlgSqIQfA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton )
+  https://www.canva.com/design/DAGndMJwJXk/byMJqcjBxSnYC-amblbhIg/edit?utm_content=DAGndMJwJXk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
 ---
 
