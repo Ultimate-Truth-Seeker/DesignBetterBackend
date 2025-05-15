@@ -63,7 +63,7 @@ class PatronBase(models.Model):
     observaciones = models.TextField(blank=True)
     archivo_patron = models.CharField(max_length=255, blank=True)  # Ruta a PDF, DXF, etc.
     creado_por = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    #fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     def _str_(self):
         return self.nombre

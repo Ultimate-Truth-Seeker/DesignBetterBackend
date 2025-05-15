@@ -147,11 +147,36 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from .serializers import CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+User = get_user_model()
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token_str = request.data.get('refresh')
+        if not refresh_token_str:
+            return Response({'error': 'No se proporcionó refresh token'}, status=400)
+
+        try:
+            refresh = RefreshToken(refresh_token_str)
+            user = User.objects.get(id=refresh['user_id'])
+        except Exception as e:
+            return Response({'error': str(e)}, status=401)
+
+        new_access_token = CustomTokenObtainPairSerializer.get_token(user).access_token
+
+        return Response({
+            'access': str(new_access_token),
+            'refresh': str(refresh_token_str),
+            'email': user.correo_electronico,
+            'rol': user.rol,
+            'nombre': user.nombre,
+        })
 
 from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -175,7 +200,9 @@ class GoogleLogin(SocialLoginView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         user = self.user
-
+        if not user.is_active:
+            user.is_active = True
+            user.save()
         # Generar tokens JWT manualmente
         refresh = RefreshToken.for_user(user)
         refresh['rol'] = user.rol

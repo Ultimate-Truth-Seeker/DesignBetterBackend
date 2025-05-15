@@ -12,6 +12,7 @@ from .views import (
     PasswordResetRequestView, 
     PasswordResetConfirmView, 
     CustomTokenObtainPairView, 
+    CustomTokenRefreshView,
     GoogleLogin, 
     FacebookLogin,  # Añadido para consistencia
     AsignarRolView, 
@@ -30,7 +31,7 @@ router.register(r'plantillas', PlantillaPrendaViewSet)
 urlpatterns = [
     # Autenticación JWT
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     
     # Registro y activación
     path('register/', RegistroView.as_view(), name='register'),

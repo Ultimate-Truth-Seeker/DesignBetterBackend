@@ -39,6 +39,15 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['rol'] = user.rol
         token['nombre'] = user.nombre
         return token
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Agregar campos personalizados directamente al nivel superior
+        data['email'] = self.user.correo_electronico
+        data['rol'] = self.user.rol
+        data['nombre'] = self.user.nombre
+
+        return data
 
 class CustomJWTSerializer(JWTSerializer):
     def get_token(self, user):
