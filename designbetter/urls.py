@@ -19,6 +19,7 @@ from .views import (
     DxfFileUploadView,
     PatronBaseViewSet, 
     PartePatronViewSet,
+    CrearPatronView,
     ListarPatronesView  # Nueva vista para filtros
 )
 from . import views
@@ -51,9 +52,10 @@ urlpatterns = [
     
     # API adicional para patrones (filtros personalizados)
     path('patrones/listar/', ListarPatronesView.as_view(), name='listar-patrones'),
-    
+     
     # Router URLs (patrones/, partes/, usuarios/)
     path('', include(router.urls)),
+    path('crear-patron/', CrearPatronView.as_view(), name='crear-patron'),
     path('api/patron/<int:patron_id>/svg/', views.patron_svg_view, name='patron_svg'),
 
 ]

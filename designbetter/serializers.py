@@ -70,6 +70,7 @@ class DxfFileSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'file', 'uploaded_at']
 
 # --- Serializadores NUEVOS/Modificados para Patrones ---
+import json
 class MedidasField(serializers.Field):
     """Campo personalizado para validar medidas en formato JSON"""
     def to_representation(self, value):
@@ -81,14 +82,13 @@ class MedidasField(serializers.Field):
         return data
 
 class PartePatronSerializer(serializers.ModelSerializer):
-    medidas = MedidasField()
-
+    medidas = serializers.JSONField()
+    geometria = serializers.JSONField()
     class Meta:
         model = PartePatron
-        fields = ['nombre_parte', 'medidas', 'observaciones']
-
+        fields = ['nombre_parte', 'medidas', 'observaciones', 'geometria']
 class PatronBaseSerializer(serializers.ModelSerializer):
-    partes = PartePatronSerializer(many=True)
+    partes = PartePatronSerializer(many=True, write_only=True)  # ← vuelve a esto
     materiales = serializers.PrimaryKeyRelatedField(
         queryset=Material.objects.all(),
         many=True,
@@ -102,19 +102,26 @@ class PatronBaseSerializer(serializers.ModelSerializer):
             'id', 'nombre', 'tipo_prenda', 'genero', 
             'tallas_disponibles', 'observaciones', 
             'archivo_patron', 'partes', 'materiales',
-            'creado_por', 'fecha_creacion'
+            #'creado_por', 'fecha_creacion'
         ]
         read_only_fields = ('creado_por', 'fecha_creacion')
         extra_kwargs = {
             'tallas_disponibles': {'required': True}
         }
-
+    def to_internal_value(self, data):
+        # Si partes viene como string, deserialízalo
+        for campo in ['partes']:
+            if isinstance(data.get(campo), str):
+                try:
+                    data[campo] = json.loads(data[campo])
+                except json.JSONDecodeError:
+                    raise serializers.ValidationError({campo: 'Formato JSON inválido'})
+        return super().to_internal_value(data)
+    
     def create(self, validated_data):
         partes_data = validated_data.pop('partes', [])
-        materiales_data = validated_data.pop('materiales', [])
         
         patron = PatronBase.objects.create(**validated_data)
-        patron.materiales.set(materiales_data)
         
         for parte_data in partes_data:
             PartePatron.objects.create(patron_base=patron, **parte_data)

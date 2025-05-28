@@ -288,7 +288,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import PatronBase, Material
 from .serializers import PatronBaseSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
-
+import json
 class CrearPatronView(generics.CreateAPIView):
     """
     Vista para crear patrones con partes anidadas y materiales.
@@ -302,6 +302,25 @@ class CrearPatronView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # Asigna automáticamente el usuario logeado como creador
         serializer.save(creado_por=self.request.user)
+    def post(self, request, *args, **kwargs):
+        raw_data = request.data
+        data = {}
+
+        for key in raw_data:
+            value = raw_data.get(key)
+
+            if key in ['partes'] and isinstance(value, str):
+                try:
+                    data[key] = json.loads(value)
+                except json.JSONDecodeError:
+                    return Response({key: 'Formato JSON inválido'}, status=400)
+            else:
+                data[key] = value
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=201)
+    
 
 class ListarPatronesView(generics.ListAPIView):
     """
