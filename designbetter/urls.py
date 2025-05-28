@@ -20,7 +20,8 @@ from .views import (
     PatronBaseViewSet, 
     PartePatronViewSet,
     CrearPatronView,
-    ListarPatronesView  # Nueva vista para filtros
+    ListarPatronesView,  # Nueva vista para filtros
+    CrearPedidoPersonalizadoView
 )
 from . import views
 
@@ -57,5 +58,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('crear-patron/', CrearPatronView.as_view(), name='crear-patron'),
     path('api/patron/<int:patron_id>/svg/', views.patron_svg_view, name='patron_svg'),
+
+    path('pedidos/crear/', CrearPedidoPersonalizadoView.as_view(), name='crear-pedido-personalizado'),
 
 ]
