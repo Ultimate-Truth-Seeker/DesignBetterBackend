@@ -59,11 +59,11 @@ class RegistroView(APIView):
 class ActivarCuentaView(APIView):
     def get(self, request, token):
         signer = Signer()
+        from django.contrib.auth import get_user_model
+        Usuario = get_user_model()
         try:
             correo_electronico = signer.unsign(token)
             # Buscamos al usuario
-            from django.contrib.auth import get_user_model
-            Usuario = get_user_model()
             user = Usuario.objects.get(correo_electronico=correo_electronico)
             user.is_active = True
             user.save()
