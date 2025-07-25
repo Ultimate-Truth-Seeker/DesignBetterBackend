@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from rest_framework.exceptions import PermissionDenied
 from .models import PedidoPersonalizado, EstadoPedido, PedidoEstadoHistoria
-from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer
+from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer, PedidoDetalleSerializer
 from .permissions import IsCliente, IsDisenador
 
 class CrearPedidoPersonalizadoView(generics.CreateAPIView):
@@ -15,6 +18,32 @@ class CrearPedidoPersonalizadoView(generics.CreateAPIView):
         serializer.save(
             usuario=self.request.user,
             estado=estado_inicial
+        )
+
+class ListaPedidosView(generics.ListAPIView):
+    """
+    GET /pedidos/  → lista sólo los pedidos donde request.user es cliente o diseñador.
+    """
+    serializer_class = PedidoDetalleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        u = self.request.user
+        return PedidoPersonalizado.objects.filter(
+            Q(usuario=u) | Q(disenador=u)
+        )
+
+class DetallePedidoView(generics.RetrieveAPIView):
+    """
+    GET /pedidos/{pk}/  → devuelve detalle sólo si request.user está involucrado.
+    """
+    serializer_class = PedidoDetalleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        u = self.request.user
+        return PedidoPersonalizado.objects.filter(
+            Q(usuario=u) | Q(disenador=u)
         )
 
 class ActualizarEstadoPedidoView(generics.UpdateAPIView):
@@ -37,13 +66,28 @@ class ActualizarEstadoPedidoView(generics.UpdateAPIView):
             # puedes pasar notas si lo deseas; aquí lo dejamos vacío
         )
 
+
 class HistorialEstadosPedidoView(generics.ListAPIView):
+    """
+    GET /pedidos/{pk}/historial/
+    → Devuelve el historial de estados solo si request.user es cliente o diseñador del pedido.
+    """
     serializer_class = PedidoEstadoHistoriaSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         pedido_id = self.kwargs['pk']
-        return PedidoEstadoHistoria.objects.filter(pedido__id=pedido_id)
+        user = self.request.user
+
+        # 1) Cargamos el pedido o 404 si no existe
+        pedido = get_object_or_404(PedidoPersonalizado, id=pedido_id)
+
+        # 2) Comprobamos involucramiento
+        if not (pedido.usuario == user or pedido.disenador == user):
+            raise PermissionDenied("No estás autorizado para ver este historial.")
+
+        # 3) Devolver solo las entradas asociadas a este pedido
+        return PedidoEstadoHistoria.objects.filter(pedido=pedido)
 
 class ActualizarPagoPedidoView(generics.UpdateAPIView):
     queryset = PedidoPersonalizado.objects.all()

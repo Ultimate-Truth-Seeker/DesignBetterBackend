@@ -48,6 +48,14 @@ class PedidoPersonalizado(models.Model):
         on_delete=models.CASCADE,
         related_name='pedidos_personalizados'
     )
+    disenador = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pedidos_como_disenador',
+        help_text="Diseñador asignado al pedido"
+    )
     plantilla = models.ForeignKey(
         PlantillaPrenda,
         on_delete=models.CASCADE,

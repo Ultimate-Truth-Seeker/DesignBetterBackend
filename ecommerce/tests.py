@@ -70,6 +70,7 @@ class PedidoPersonalizadoTests(APITestCase):
         url = reverse('crear-pedido')
         payload = {
             "plantilla": 1,    # asume que existen IDs válidos
+            "disenador": 1,
             "color": "Rojo",
             "ajustes": "Sin ajuste",
             "notas": "Prueba"
@@ -170,5 +171,16 @@ class PedidoPersonalizadoTests(APITestCase):
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         # Todos los pedidos devueltos deben pertenecer a self.cliente
+        for item in resp.data:
+            self.assertEqual(item['usuario'], self.cliente.id)
+        url = reverse('historial-pedido', args=[pedido_otro.id])
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        url = reverse('detalle-pedido', args=[pedido.id]) 
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        url = reverse('listar-pedidos') 
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         for item in resp.data:
             self.assertEqual(item['usuario'], self.cliente.id)
