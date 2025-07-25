@@ -113,39 +113,4 @@ class DxfFile(models.Model):
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='dxf_files/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
-class PedidoPersonalizado(models.Model):
-    ESTADO_CHOICES = [
-        ('pendiente', 'Pendiente'),
-        ('diseño', 'Diseño'),
-        ('produccion', 'Producción'),
-        ('entrega', 'Entrega'),
-        ('completado', 'Completado'),
-        ('cancelado', 'Cancelado'),
-    ]
-
-    id = models.AutoField(primary_key=True)
-    usuario = models.ForeignKey(
-        Usuario,
-        on_delete=models.CASCADE,
-        related_name='pedidos_personalizados'
-    )
-    plantilla = models.ForeignKey(
-        PlantillaPrenda,
-        on_delete=models.CASCADE,
-        related_name='pedidos_personalizados'
-    )
-    material = models.ForeignKey(
-        Material,
-        on_delete=models.CASCADE,
-        related_name='pedidos_personalizados'
-    )
-    color = models.CharField(max_length=50)
-    ajustes = models.TextField(blank=True)
-    notas = models.TextField(blank=True)
-    estado_pedido = models.CharField(
-        max_length=20,
-        choices=ESTADO_CHOICES,
-        default='pendiente'
-    )
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+ 

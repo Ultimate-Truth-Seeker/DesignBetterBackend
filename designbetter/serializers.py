@@ -158,9 +158,3 @@ class PlantillaPrendaSerializer(serializers.ModelSerializer):
         materiales = PlantillaMaterial.objects.filter(plantilla=obj)
         return PlantillaMaterialSerializer(materiales, many=True).data
 
-from .models import PedidoPersonalizado
-class PedidoPersonalizadoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PedidoPersonalizado
-        fields = '__all__'
-        read_only_fields = ['id', 'fecha_creacion', 'estado_pedido']

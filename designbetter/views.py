@@ -345,13 +345,3 @@ class PlantillaPrendaViewSet(viewsets.ModelViewSet):
     queryset = PlantillaPrenda.objects.all().prefetch_related('materiales', 'patron_base__partes')
     serializer_class = PlantillaPrendaSerializer
 
-from .models import PedidoPersonalizado
-from .serializers import PedidoPersonalizadoSerializer
-class CrearPedidoPersonalizadoView(generics.CreateAPIView):
-    queryset = PedidoPersonalizado.objects.all()
-    serializer_class = PedidoPersonalizadoSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        # Asigna automáticamente el usuario autenticado
-        serializer.save(usuario=self.request.user)
