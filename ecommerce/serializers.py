@@ -56,3 +56,13 @@ class PagoPedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PedidoPersonalizado
         fields = ['pago_realizado']
+
+class PedidoTrackingSerializer(PedidoDetalleSerializer):
+    historial = PedidoEstadoHistoriaSerializer(
+        source='pedidoestadohistoria_set',
+        many=True,
+        read_only=True
+    )
+
+    class Meta(PedidoDetalleSerializer.Meta):
+        fields = PedidoDetalleSerializer.Meta.fields + ['historial']

@@ -5,8 +5,9 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
 from .models import PedidoPersonalizado, EstadoPedido, PedidoEstadoHistoria
-from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer, PedidoDetalleSerializer
+from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer, PedidoDetalleSerializer, PedidoTrackingSerializer
 from .permissions import IsCliente, IsDisenador
+from rest_framework.generics import RetrieveAPIView
 
 class CrearPedidoPersonalizadoView(generics.CreateAPIView):
     queryset = PedidoPersonalizado.objects.all()
@@ -93,3 +94,8 @@ class ActualizarPagoPedidoView(generics.UpdateAPIView):
     queryset = PedidoPersonalizado.objects.all()
     serializer_class = PagoPedidoSerializer
     permission_classes = [IsAuthenticated, IsDisenador]
+
+class PedidoTrackingAPIView(RetrieveAPIView):
+    queryset = PedidoPersonalizado.objects.all()
+    serializer_class = PedidoTrackingSerializer
+    lookup_field = 'id'
