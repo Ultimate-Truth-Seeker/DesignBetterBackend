@@ -131,7 +131,7 @@ class PedidoPersonalizadoTests(APITestCase):
             estado=self.estado_pendiente
         )
         self.authenticate('dise@example.com', 'pass123')
-        url = reverse('actualizar-estado-pedido', args=[pedido.id])
+        url = reverse('actualizar-pago-pedido', args=[pedido.id])
 
         resp = self.client.patch(url, {'pago_realizado': True}, format='json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -148,6 +148,14 @@ class PedidoPersonalizadoTests(APITestCase):
         )
         otro.is_active=True; otro.save()
         pedido = PedidoPersonalizado.objects.create(
+            usuario=self.cliente,
+            plantilla_id=1,
+            color='Blanco',
+            ajustes='-',
+            notas='-',
+            estado=self.estado_pendiente
+        )
+        pedido_otro = PedidoPersonalizado.objects.create(
             usuario=otro,
             plantilla_id=1,
             color='Blanco',
@@ -157,7 +165,7 @@ class PedidoPersonalizadoTests(APITestCase):
         )
 
         # Cliente original pide lista
-        self.client.login(correo_electronico='cli@example.com', password='pass123')
+        self.authenticate('cli@example.com', 'pass123')
         url = reverse('historial-pedido', args=[pedido.id])  # asume que tienes un ListAPIView
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)

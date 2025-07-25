@@ -4,11 +4,21 @@ from rest_framework import serializers
 from .models import PedidoPersonalizado, PedidoEstadoHistoria
 
 class CrearPedidoSerializer(serializers.ModelSerializer):
+    # Serializamos el slug del estado
+    estado = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='slug'
+    )
+    pago_realizado = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = PedidoPersonalizado
-        # omitimos el campo estado porque lo asignamos siempre a 'pendiente'
-        fields = ['id', 'plantilla', 'color', 'ajustes', 'notas']
-        read_only_fields = ['id']
+        fields = [
+            'id',
+            'plantilla', 'color', 'ajustes', 'notas', 'usuario',
+            'estado', 'pago_realizado',
+        ]
+        read_only_fields = ['id', 'usuario', 'estado', 'pago_realizado']
 
 class ActualizarEstadoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,3 +32,8 @@ class PedidoEstadoHistoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = PedidoEstadoHistoria
         fields = ['fecha', 'estado', 'usuario', 'notas']
+
+class PagoPedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PedidoPersonalizado
+        fields = ['pago_realizado']

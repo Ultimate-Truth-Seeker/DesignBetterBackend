@@ -2,12 +2,13 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import PedidoPersonalizado, EstadoPedido, PedidoEstadoHistoria
-from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer
+from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer
+from .permissions import IsCliente, IsDisenador
 
 class CrearPedidoPersonalizadoView(generics.CreateAPIView):
     queryset = PedidoPersonalizado.objects.all()
     serializer_class = CrearPedidoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCliente]
 
     def perform_create(self, serializer):
         estado_inicial = EstadoPedido.objects.get(slug='pendiente')
@@ -19,7 +20,7 @@ class CrearPedidoPersonalizadoView(generics.CreateAPIView):
 class ActualizarEstadoPedidoView(generics.UpdateAPIView):
     queryset = PedidoPersonalizado.objects.all()
     serializer_class = ActualizarEstadoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsDisenador]
     def perform_update(self, serializer):
         pedido = self.get_object()
         nuevo_estado = serializer.validated_data['estado']
@@ -43,3 +44,8 @@ class HistorialEstadosPedidoView(generics.ListAPIView):
     def get_queryset(self):
         pedido_id = self.kwargs['pk']
         return PedidoEstadoHistoria.objects.filter(pedido__id=pedido_id)
+
+class ActualizarPagoPedidoView(generics.UpdateAPIView):
+    queryset = PedidoPersonalizado.objects.all()
+    serializer_class = PagoPedidoSerializer
+    permission_classes = [IsAuthenticated, IsDisenador]
