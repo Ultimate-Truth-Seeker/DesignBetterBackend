@@ -10,8 +10,6 @@ settings/local.py
 *.mo
 
 # Migraciones (opcional)
-*/migrations/*.py
-!*/migrations/__init__.py
 
 ### PostgreSQL ###
 /postgres_data  # Volumen local de PostgreSQL
