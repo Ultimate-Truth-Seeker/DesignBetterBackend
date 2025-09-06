@@ -17,7 +17,6 @@ class AuthIntegrationTests(APITestCase):
         self.client = APIClient()
 
     def test_login_and_access_protected(self):
-        # Ajusta la ruta al login de tu API (token/jwt/session)
         res_login = self.client.post("/auth/login/", {
             "correo_electronico": "ana@example.com",
             "password": "SuperSecreta123"
@@ -101,6 +100,5 @@ class ProductListIntegrationTests(APITestCase):
         self.client.force_authenticate(user=self.u)
 
     def test_paginated_list(self):
-        # Suponiendo page_size=10 en tu paginador DRF
         res = self.client.get("/orders/pedidos/")
         self.assertEqual(res.status_code, status.HTTP_200_OK)

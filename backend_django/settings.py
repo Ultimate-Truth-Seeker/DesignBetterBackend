@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'designbetter',
     'ecommerce',
+    'patronaje',
     'rest_framework',
     "corsheaders",
     'django.contrib.admin',

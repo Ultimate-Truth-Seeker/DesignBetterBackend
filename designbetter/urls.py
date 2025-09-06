@@ -6,7 +6,6 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 from .views import (
-    PlantillaPrendaViewSet,
     RegistroView, 
     ActivarCuentaView, 
     PasswordResetRequestView, 
@@ -16,18 +15,9 @@ from .views import (
     GoogleLogin, 
     FacebookLogin,  # Añadido para consistencia
     AsignarRolView, 
-    DxfFileUploadView,
-    PatronBaseViewSet, 
-    PartePatronViewSet,
-    CrearPatronView,
-    ListarPatronesView,  # Nueva vista para filtros
 )
 from . import views
 
-router = DefaultRouter()
-router.register(r'patrones', PatronBaseViewSet, basename='patrones')  # Añadido basename
-router.register(r'partes', PartePatronViewSet, basename='partes')
-router.register(r'plantillas', PlantillaPrendaViewSet)
 
 urlpatterns = [
     # Autenticación JWT
@@ -48,14 +38,5 @@ urlpatterns = [
     
     # Roles y archivos
     path('asignar-rol/', AsignarRolView.as_view(), name='asignar-rol'),
-    path('upload-dxf/', DxfFileUploadView.as_view(), name='upload-dxf'),
-    
-    # API adicional para patrones (filtros personalizados)
-    path('patrones/listar/', ListarPatronesView.as_view(), name='listar-patrones'),
-     
-    # Router URLs (patrones/, partes/, usuarios/)
-    path('', include(router.urls)),
-    path('crear-patron/', CrearPatronView.as_view(), name='crear-patron'),
-    path('api/patron/<int:patron_id>/svg/', views.patron_svg_view, name='patron_svg'),
 
 ]

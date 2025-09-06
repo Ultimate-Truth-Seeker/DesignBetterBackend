@@ -1,5 +1,6 @@
 from django.db import models
 from designbetter.models import *
+from patronaje.models import PlantillaPrenda
 
 class EstadoPedido(models.Model):
     """

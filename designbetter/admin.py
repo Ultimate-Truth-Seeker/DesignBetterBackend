@@ -1,10 +1,10 @@
 from django.contrib import admin
 from .models import Usuario
-from .models import PatronBase
-from .models import PlantillaPrenda
-from .models import Material
-from .models import PlantillaMaterial
-from .models import PartePatron
+from patronaje.models import PatronBase
+from patronaje.models import PlantillaPrenda
+from patronaje.models import Material
+from patronaje.models import PlantillaMaterial
+from patronaje.models import PartePatron
 
 #admin.site.register(Usuario)
 

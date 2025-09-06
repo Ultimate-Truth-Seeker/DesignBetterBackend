@@ -1,7 +1,7 @@
 from allauth.socialaccount.models import SocialApp
 from django.contrib.sites.models import Site
 from ecommerce.models import EstadoPedido
-from designbetter.models import PlantillaPrenda
+from patronaje.models import PlantillaPrenda
 
 site = Site.objects.get(id=1)
 
