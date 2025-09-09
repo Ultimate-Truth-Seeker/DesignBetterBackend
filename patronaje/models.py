@@ -1,18 +1,76 @@
 from django.db import models
 from designbetter.models import Usuario
 
-class PatronBase(models.Model):
-    nombre = models.CharField(max_length=100)
-    tipo_prenda = models.CharField(max_length=50)
-    genero = models.CharField(max_length=20)
-    tallas_disponibles = models.JSONField(blank=True, null=True)  # Ej: ["S", "M", "L"]
-    observaciones = models.TextField(blank=True)
-    archivo_patron = models.CharField(max_length=255, blank=True)  # Ruta a PDF, DXF, etc.
-    creado_por = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True)
-    #fecha_creacion = models.DateTimeField(auto_now_add=True)
+class PatronStatus(models.TextChoices):
+    DRAFT = 'draft', 'Draft'
+    PUBLISHED = 'published', 'Published'
+    ARCHIVED = 'archived', 'Archived'
 
-    def _str_(self):
-        return self.nombre
+class PatronBase(models.Model):
+    code = models.CharField(
+        max_length=64,
+        blank=True,
+        null=True,
+        help_text="Código único del patrón (p.ej. PAT-TEE-BASIC)"
+    )
+    name = models.CharField(max_length=150, help_text="Nombre legible del patrón")
+    description = models.TextField(blank=True, default="", help_text="Descripción corta")
+    category = models.CharField(max_length=100, blank=True, default="", help_text="Categoría / familia")
+
+    status = models.CharField(
+        max_length=10,
+        choices=PatronStatus.choices,
+        default=PatronStatus.DRAFT,
+        db_index=True,
+        help_text="Estado de publicación"
+    )
+
+    params_schema = models.JSONField(
+        blank=True, default=dict,
+        help_text="JSON Schema de parámetros de entrada"
+    )
+    constraints = models.JSONField(
+        blank=True, default=dict,
+        help_text="Reglas/inequations/fórmulas simbólicas"
+    )
+    pieces = models.JSONField(
+        blank=True, default=dict,
+        help_text="Definición paramétrica de piezas"
+    )
+    grading_rules = models.JSONField(
+        blank=True, default=dict,
+        help_text="Reglas de tallaje/escala"
+    )
+    geometry_dsl = models.TextField(
+        blank=True, null=True,
+        help_text="(Opcional) DSL para construir el patrón 2D"
+    )
+
+    version = models.PositiveIntegerField(default=1)
+    created_by = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='patrones_creados'
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['code', 'version'],
+                name='uq_patron_code_version'
+            )
+        ]
+        indexes = [
+            models.Index(fields=['code'], name='idx_patron_code'),
+            models.Index(fields=['status'], name='idx_patron_status'),
+        ]
+        ordering = ['-created_at', '-version']
+
+    def __str__(self):
+        code = self.code or "NO-CODE"
+        return f"{code} · {self.name} v{self.version}"
 
 
 class PlantillaPrenda(models.Model):
