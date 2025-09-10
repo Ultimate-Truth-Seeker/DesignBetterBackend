@@ -26,7 +26,8 @@ urlpatterns = [
     path('social/', include('allauth.socialaccount.urls')),  # endpoints de redes sociales
     path('auth/', include('designbetter.urls')),
     path('orders/', include('ecommerce.urls')),
-    path('templates/', include('patronaje.urls'))
+    path('templates/', include('patronaje.urls')),
+    path('mensajes/', include('mensajeria.urls')),
 ]
 from django.conf import settings
 from django.conf.urls.static import static

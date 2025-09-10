@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'designbetter',
     'ecommerce',
     'patronaje',
+    'mensajeria',
     'rest_framework',
     "corsheaders",
     'django.contrib.admin',

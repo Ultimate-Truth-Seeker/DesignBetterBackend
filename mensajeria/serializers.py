@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from backend_django.apps.mensajeria.models import Conversacion, Mensaje
-from backend_django.apps.usuarios.models import Usuario
+from .models import Conversacion, Mensaje
+from designbetter.models import Usuario
 
 class UsuarioSimpleSerializer(serializers.ModelSerializer):
     class Meta:

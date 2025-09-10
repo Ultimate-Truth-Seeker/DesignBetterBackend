@@ -1,9 +1,9 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from backend_django.apps.mensajeria.models import Conversacion, Mensaje
-from backend_django.apps.mensajeria.api.serializers import ConversacionSerializer, MensajeSerializer
-from backend_django.apps.usuarios.models import Usuario
+from .models import Conversacion, Mensaje
+from .serializers import ConversacionSerializer, MensajeSerializer
+from designbetter.models import Usuario
 
 class ConversacionViewSet(viewsets.ModelViewSet):
     queryset = Conversacion.objects.all()
