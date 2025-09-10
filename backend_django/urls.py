@@ -27,7 +27,7 @@ urlpatterns = [
     path('auth/', include('designbetter.urls')),
     path('orders/', include('ecommerce.urls')),
     path('templates/', include('patronaje.urls')),
-    path('mensajes/', include('mensajeria.urls')),
+    #path('mensajes/', include('mensajeria.urls')),
 ]
 from django.conf import settings
 from django.conf.urls.static import static

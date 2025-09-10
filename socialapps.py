@@ -22,4 +22,5 @@ EstadoPedido.objects.create(
 EstadoPedido.objects.create(
     slug='produccion', nombre='Producción', orden=3
 )
-PlantillaPrenda.objects.create(nombre = "plantilla ejemplo", descripcion = "", tipo_ropa = "", tipo_cuerpo = "")
+#PlantillaPrenda.objects.create(nombre = "plantilla ejemplo", descripcion = "", tipo_ropa = "", tipo_cuerpo = "")
+#TODO Pendiente añadir plantilla nueva de ejemplo
