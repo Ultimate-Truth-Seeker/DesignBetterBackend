@@ -1,14 +1,13 @@
-from rest_framework import viewsets, status
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversacion, Mensaje
 from .serializers import ConversacionSerializer, MensajeSerializer
-from designbetter.models import Usuario
+from backend_django.apps.usuarios.models import Usuario
 
-class ConversacionViewSet(viewsets.ModelViewSet):
-    queryset = Conversacion.objects.all()
-    serializer_class = ConversacionSerializer
+class CrearConversacionView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ConversacionSerializer
 
     def create(self, request, *args, **kwargs):
         user_ids = request.data.get("participantes", [])
@@ -24,11 +23,21 @@ class ConversacionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(conversacion)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
-class MensajeViewSet(viewsets.ModelViewSet):
-    queryset = Mensaje.objects.all()
-    serializer_class = MensajeSerializer
+class ListaConversacionesView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ConversacionSerializer
+
+    def get_queryset(self):
+        return Conversacion.objects.filter(participantes=self.request.user)
+
+class DetalleConversacionView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ConversacionSerializer
+    queryset = Conversacion.objects.all()
+
+class EnviarMensajeView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MensajeSerializer
 
     def create(self, request, *args, **kwargs):
         conversacion_id = request.data.get("conversacion")
@@ -48,3 +57,11 @@ class MensajeViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(mensaje)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class ListaMensajesView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MensajeSerializer
+
+    def get_queryset(self):
+        conversacion_id = self.kwargs['conversacion_id']
+        return Mensaje.objects.filter(conversacion_id=conversacion_id)
