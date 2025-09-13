@@ -116,3 +116,44 @@ class PedidoEstadoHistoria(models.Model):
 
     def __str__(self):
         return f"{self.pedido.id} → {self.estado.slug} @ {self.fecha:%Y-%m-%d %H:%M}"
+
+
+# --- Modelo Review agregado ---
+import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
+
+class Review(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # templateId: referencia opcional a PlantillaPrenda (ya existe importada arriba)
+    plantilla = models.ForeignKey(
+        PlantillaPrenda,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviews',
+        help_text="Referencia opcional a la plantilla (templateId)"
+    )
+
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Calificación numérica (por ejemplo 1-5)"
+    )
+    title = models.CharField(max_length=255, blank=True, help_text="Título corto de la reseña")
+    body = models.TextField(blank=True, help_text="Contenido/descripcion de la reseña")
+
+    reviewer_name = models.CharField(max_length=150, help_text="Nombre del autor de la reseña")
+    reviewer_avatar = models.URLField(blank=True, null=True, help_text="URL del avatar del autor")
+    reviewer_date = models.DateTimeField(default=timezone.now, help_text="Fecha de la reseña")
+
+    creado = models.DateTimeField(auto_now_add=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Reseña"
+        verbose_name_plural = "Reseñas"
+        ordering = ['-creado']
+
+    def __str__(self):
+        return f"{self.title or 'Reseña'} — {self.rating}/5 por {self.reviewer_name}"
