@@ -1,13 +1,14 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import permissions, status, generics
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied
-from .models import PedidoPersonalizado, EstadoPedido, PedidoEstadoHistoria
-from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer, PedidoDetalleSerializer, PedidoTrackingSerializer
+from .models import Review, PedidoPersonalizado, EstadoPedido, PedidoEstadoHistoria
+from .serializers import CrearPedidoSerializer, ActualizarEstadoSerializer, PedidoEstadoHistoriaSerializer, PagoPedidoSerializer, PedidoDetalleSerializer, PedidoTrackingSerializer, ReviewSerializer, CreateReviewSerializer
 from .permissions import IsCliente, IsDisenador
 from rest_framework.generics import RetrieveAPIView
+from rest_framework.response import Response
 
 class CrearPedidoPersonalizadoView(generics.CreateAPIView):
     queryset = PedidoPersonalizado.objects.all()
@@ -99,3 +100,24 @@ class PedidoTrackingAPIView(RetrieveAPIView):
     queryset = PedidoPersonalizado.objects.all()
     serializer_class = PedidoTrackingSerializer
     lookup_field = 'id'
+
+class CreateReviewView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CreateReviewSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        review = serializer.save()
+        output = ReviewSerializer(review).data
+        headers = self.get_success_headers(output)
+        return Response(output, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class TemplateReviewsListView(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        plantilla_id = self.kwargs.get("plantilla_id")
+        return Review.objects.filter(plantilla_id=plantilla_id).order_by("-id")
