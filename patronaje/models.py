@@ -399,4 +399,57 @@ class DxfFile(models.Model):
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='dxf_files/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+class ExportKind(models.TextChoices):
+    PDF = 'pdf', 'PDF'
+    DXF = 'dxf', 'DXF'
+    SVG = 'svg', 'SVG'
+    GLB = 'glb', 'GLB'
+    TECHPACK = 'techpack', 'TechPack'
+
+
+class ExportArtifact(models.Model):
+    configuration = models.ForeignKey(
+        Configuration,
+        on_delete=models.CASCADE,
+        related_name='export_artifacts',
+        help_text="Configuración desde la cual se generó el artefacto"
+    )
+
+    kind = models.CharField(
+        max_length=16,
+        choices=ExportKind.choices,
+        db_index=True,
+        help_text="Tipo de artefacto exportado"
+    )
+
+    # Campo 'path' como string; si prefieres FileField puedes cambiarlo después.
+    path = models.CharField(
+        max_length=1024,
+        help_text="Ruta o identificador del archivo exportado (p.ej. S3 key, path local)"
+    )
+
+    metadata = models.JSONField(
+        blank=True,
+        default=dict,
+        help_text="Metadatos adicionales (JSON)"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['configuration'], name='idx_exportartifact_configuration'),
+            models.Index(fields=['kind'], name='idx_exportartifact_kind'),
+            models.Index(fields=['created_at'], name='idx_exportartifact_created_at'),
+        ]
+        ordering = ['-created_at']
+        verbose_name = "Export Artifact"
+        verbose_name_plural = "Export Artifacts"
+
+    def __str__(self):
+        cfg_id = getattr(self.configuration, 'id', None)
+        return f"ExportArtifact ({self.kind}) - cfg:{cfg_id} - {self.path}"
+
  
