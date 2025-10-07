@@ -452,4 +452,126 @@ class ExportArtifact(models.Model):
         cfg_id = getattr(self.configuration, 'id', None)
         return f"ExportArtifact ({self.kind}) - cfg:{cfg_id} - {self.path}"
 
+class MeasurementSchema(models.Model):
+    """
+    Catálogo maestro de medidas disponibles y sus reglas de validación.
+    Ejemplo: bust, waist, hip, etc.
+    """
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text="Identificador interno de la medida (ej. 'bust', 'waist')"
+    )
+    display_name = models.CharField(
+        max_length=100,
+        help_text="Nombre legible de la medida (ej. 'Busto', 'Cintura')"
+    )
+    unit = models.CharField(
+        max_length=10,
+        help_text="Unidad base (cm, in, etc.)"
+    )
+    min = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Valor mínimo permitido (opcional)"
+    )
+    max = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Valor máximo permitido (opcional)"
+    )
+    required = models.BooleanField(
+        default=False,
+        help_text="Indica si esta medida es obligatoria"
+    )
+    formula_notes = models.TextField(
+        blank=True,
+        default="",
+        help_text="Notas o fórmulas de derivación para esta medida"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['code'], name='idx_measurementschema_code'),
+        ]
+        ordering = ['code']
+
+    def __str__(self):
+        return f"{self.display_name} ({self.code})"
+
+
+class MeasurementTable(models.Model):
+    """
+    Tabla de medidas específicas (por género, sistema de tallas, etc.)
+    """
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('unisex', 'Unisex'),
+    ]
+
+    UNIT_SYSTEM_CHOICES = [
+        ('metric', 'Metric (cm)'),
+        ('imperial', 'Imperial (in)'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(
+        max_length=150,
+        help_text="Nombre de la tabla (p.ej. 'Tabla Hombres EU', 'Women's Size Chart')"
+    )
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
+        default='unisex'
+    )
+    size_system = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+        help_text="Sistema de tallas (p.ej. EU, US, MX)"
+    )
+    unit_system = models.CharField(
+        max_length=10,
+        choices=UNIT_SYSTEM_CHOICES,
+        default='metric',
+        help_text="Sistema de unidades usado en las medidas"
+    )
+    measures = models.JSONField(
+        blank=True,
+        default=dict,
+        help_text="Diccionario de medidas base (ej. {'bust': 90, 'waist': 70})"
+    )
+    owner = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='measurement_tables',
+        help_text="Usuario propietario o creador de la tabla"
+    )
+    version = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'version'],
+                name='uq_measurementtable_name_version'
+            )
+        ]
+        indexes = [
+            models.Index(fields=['gender'], name='idx_measurementtable_gender'),
+            models.Index(fields=['unit_system'], name='idx_measurementtable_unit_system'),
+        ]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} v{self.version} ({self.gender})"
+
  
