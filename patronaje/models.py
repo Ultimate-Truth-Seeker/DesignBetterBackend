@@ -99,10 +99,74 @@ class MeasurementSource(models.TextChoices):
     CUSTOM = 'custom', 'Medidas personalizadas'
     CUSTOMER = 'customer', 'Perfil de cliente'
 
-
 class MeasurementTable(models.Model):
+    """
+    Tabla de medidas específicas (por género, sistema de tallas, etc.)
+    """
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('unisex', 'Unisex'),
+    ]
+
+    UNIT_SYSTEM_CHOICES = [
+        ('metric', 'Metric (cm)'),
+        ('imperial', 'Imperial (in)'),
+    ]
+
     id = models.AutoField(primary_key=True)
-    #TODO
+    name = models.CharField(
+        max_length=150,
+        help_text="Nombre de la tabla (p.ej. 'Tabla Hombres EU', 'Women's Size Chart')"
+    )
+    gender = models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
+        default='unisex'
+    )
+    size_system = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+        help_text="Sistema de tallas (p.ej. EU, US, MX)"
+    )
+    unit_system = models.CharField(
+        max_length=10,
+        choices=UNIT_SYSTEM_CHOICES,
+        default='metric',
+        help_text="Sistema de unidades usado en las medidas"
+    )
+    measures = models.JSONField(
+        blank=True,
+        default=dict,
+        help_text="Diccionario de medidas base (ej. {'bust': 90, 'waist': 70})"
+    )
+    owner = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='measurement_tables',
+        help_text="Usuario propietario o creador de la tabla"
+    )
+    version = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'version'],
+                name='uq_mt_name_ver'
+            )
+        ]
+        indexes = [
+            models.Index(fields=['gender'], name='idx_measurementtable_gender'),
+            models.Index(fields=['unit_system'], name='idx_mt_unit'),
+        ]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} v{self.version} ({self.gender})"
 
 # ---------------------------------------
 # TEMPLATE (Plantilla de prenda)
@@ -440,7 +504,7 @@ class ExportArtifact(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['configuration'], name='idx_exportartifact_configuration'),
+            models.Index(fields=['configuration'], name='idx_expart_cfg'),
             models.Index(fields=['kind'], name='idx_exportartifact_kind'),
             models.Index(fields=['created_at'], name='idx_exportartifact_created_at'),
         ]
@@ -505,73 +569,3 @@ class MeasurementSchema(models.Model):
         return f"{self.display_name} ({self.code})"
 
 
-class MeasurementTable(models.Model):
-    """
-    Tabla de medidas específicas (por género, sistema de tallas, etc.)
-    """
-    GENDER_CHOICES = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-        ('unisex', 'Unisex'),
-    ]
-
-    UNIT_SYSTEM_CHOICES = [
-        ('metric', 'Metric (cm)'),
-        ('imperial', 'Imperial (in)'),
-    ]
-
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(
-        max_length=150,
-        help_text="Nombre de la tabla (p.ej. 'Tabla Hombres EU', 'Women's Size Chart')"
-    )
-    gender = models.CharField(
-        max_length=10,
-        choices=GENDER_CHOICES,
-        default='unisex'
-    )
-    size_system = models.CharField(
-        max_length=50,
-        blank=True,
-        default="",
-        help_text="Sistema de tallas (p.ej. EU, US, MX)"
-    )
-    unit_system = models.CharField(
-        max_length=10,
-        choices=UNIT_SYSTEM_CHOICES,
-        default='metric',
-        help_text="Sistema de unidades usado en las medidas"
-    )
-    measures = models.JSONField(
-        blank=True,
-        default=dict,
-        help_text="Diccionario de medidas base (ej. {'bust': 90, 'waist': 70})"
-    )
-    owner = models.ForeignKey(
-        Usuario,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='measurement_tables',
-        help_text="Usuario propietario o creador de la tabla"
-    )
-    version = models.PositiveIntegerField(default=1)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'version'],
-                name='uq_measurementtable_name_version'
-            )
-        ]
-        indexes = [
-            models.Index(fields=['gender'], name='idx_measurementtable_gender'),
-            models.Index(fields=['unit_system'], name='idx_measurementtable_unit_system'),
-        ]
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"{self.name} v{self.version} ({self.gender})"
-
- 
