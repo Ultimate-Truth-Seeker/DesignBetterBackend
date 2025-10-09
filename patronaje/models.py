@@ -90,8 +90,8 @@ class TemplateStatus(models.TextChoices):
 
 class ConfigurationState(models.TextChoices):
     DRAFT = 'draft', 'Draft'
-    READY = 'ready', 'Ready'            # validada / lista para producir
-    APPROVED = 'approved', 'Approved'   # aprobada por cliente/operaciones
+    READY = 'ready', 'Ready'
+    APPROVED = 'approved', 'Approved'
     ARCHIVED = 'archived', 'Archived'
 
 class MeasurementSource(models.TextChoices):
@@ -190,7 +190,6 @@ class PlantillaPrenda(models.Model):
         help_text="Estado de publicación"
     )
 
-    # Patrón paramétrico base que instancian las plantillas
     pattern_base = models.ForeignKey(
         PatronBase,
         on_delete=models.PROTECT,
@@ -198,7 +197,6 @@ class PlantillaPrenda(models.Model):
         help_text="Patrón paramétrico del cual deriva esta plantilla"
     )
 
-    # Qué parámetros se exponen y con qué UI/valores por defecto
     default_params = models.JSONField(
         blank=True, default=dict,
         help_text="Valores por defecto de parámetros del patrón"
@@ -212,7 +210,6 @@ class PlantillaPrenda(models.Model):
         help_text="Reglas de compatibilidad entre opciones (forbid/require/if-then)"
     )
 
-    # Políticas de materiales, tallas/medidas objetivo y medios
     materials_policy = models.JSONField(
         blank=True, default=dict,
         help_text="Materiales/acabados permitidos + consumos base"
@@ -222,7 +219,6 @@ class PlantillaPrenda(models.Model):
         help_text="Definición de tallas/rango (p.ej. XS-XXL) o medidas objetivo"
     )
 
-    # Media opcional
     hero_url = models.URLField(blank=True, null=True)
     gallery = ArrayField(models.URLField(), blank=True, default=list)
 
@@ -235,7 +231,6 @@ class PlantillaPrenda(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
-    # Campo para búsquedas de texto completo (opcional)
     search_vector = SearchVectorField(null=True, editable=False)
 
     class Meta:
@@ -274,15 +269,6 @@ class Configuration(models.Model):
         help_text="Versión del patrón base en el momento de crear la configuración"
     )
 
-    customer = models.ForeignKey(
-        Usuario,#'Customer',  # ajusta si usas otro modelo o app label, o déjalo null si B2B interno
-        on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name='configurations',
-        help_text="Cliente asociado (opcional)"
-    )
-
-    # Origen de las medidas
     measurement_source = models.CharField(
         max_length=10,
         choices=MeasurementSource.choices,
@@ -290,19 +276,17 @@ class Configuration(models.Model):
         help_text="Fuente de medidas para resolver el patrón"
     )
     measurement_table = models.ForeignKey(
-        MeasurementTable,  # crea este modelo o ajusta a tu naming
+        MeasurementTable,
         on_delete=models.SET_NULL,
         null=True, blank=True,
         related_name='configurations',
         help_text="Tabla de medidas si measurement_source=table"
     )
-    # Perfil de cliente o medidas ad-hoc
     custom_measures = models.JSONField(
         blank=True, default=dict,
         help_text="Medidas personalizadas (si measurement_source=custom)"
     )
 
-    # Selecciones del usuario / resolved params después de validaciones
     selected_options = models.JSONField(
         blank=True, default=dict,
         help_text="Opciones seleccionadas por el usuario (collar, puño, etc.)"
@@ -312,7 +296,6 @@ class Configuration(models.Model):
         help_text="Parámetros finales tras validación/derivación (incluye holguras, etc.)"
     )
 
-    # Geometría resultante y referencia 3D
     pieces_2d = models.JSONField(
         blank=True, default=dict,
         help_text="Geometría 2D resuelta (líneas/curvas/notches) lista para exportar"
@@ -323,13 +306,11 @@ class Configuration(models.Model):
         help_text="Ruta/ID a GLB/OBJ generado para preview 3D"
     )
 
-    # Materiales asignados por pieza y despiece
     material_assignments = models.JSONField(
         blank=True, default=dict,
         help_text="Asignación de materiales por pieza/segmento"
     )
 
-    # Costos y precio
     cost_breakdown = models.JSONField(
         blank=True, default=dict,
         help_text="Detalle de costos (materiales, mano de obra, acabados, overhead)"
@@ -349,19 +330,12 @@ class Configuration(models.Model):
         db_index=True
     )
 
-    # Huella para cachear/reproducir resultados (params + medidas + opciones)
     config_fingerprint = models.CharField(
         max_length=64,
         db_index=True,
         help_text="SHA-256 de (pattern_version, template_version, selected_options, resolved_params, measures)"
     )
 
-    created_by = models.ForeignKey(
-        Usuario,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='configurations_created'
-    )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -373,7 +347,6 @@ class Configuration(models.Model):
         ]
         ordering = ['-created_at']
 
-        # Evita duplicados exactos de la misma configuración (misma huella) por plantilla
         constraints = [
             models.UniqueConstraint(
                 fields=['template', 'config_fingerprint'],
@@ -384,7 +357,6 @@ class Configuration(models.Model):
     def __str__(self):
         return f"Cfg #{self.id} · {self.template} · {self.state}"
 
-    # ---------- Helpers ----------
     @staticmethod
     def _stable_dumps(payload: dict) -> str:
         """Dump JSON estable para hashing (sin espacios y con sort_keys)."""
@@ -405,27 +377,21 @@ class Configuration(models.Model):
         return hashlib.sha256(raw.encode('utf-8')).hexdigest()
 
     def save(self, *args, **kwargs):
-        # Autollenar versiones de plantilla/patrón si no se definieron explícitamente
         if not self.template_version:
             self.template_version = self.template.version
         if not self.pattern_version:
             self.pattern_version = self.template.pattern_base.version
 
-        # Asegurar fingerprint consistente antes de guardar
         self.config_fingerprint = self.compute_fingerprint()
         super().save(*args, **kwargs)
 
-    # Validaciones ligeras (las fuertes pueden vivir en servicios)
     def clean(self):
-        # 1) coherencia fuente de medidas
         if self.measurement_source == MeasurementSource.TABLE and not self.measurement_table_id:
             from django.core.exceptions import ValidationError
             raise ValidationError("measurement_table es requerido cuando measurement_source=table.")
         if self.measurement_source == MeasurementSource.CUSTOM and not self.custom_measures:
             from django.core.exceptions import ValidationError
             raise ValidationError("custom_measures es requerido cuando measurement_source=custom.")
-
-        # 2) moneda/precio
         if self.price_total is not None and self.price_total < 0:
             from django.core.exceptions import ValidationError
             raise ValidationError("price_total no puede ser negativo.")
@@ -434,7 +400,7 @@ class Material(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(blank=True)
 
-    def _str_(self):
+    def __str__(self):
         return self.nombre
 
 
@@ -445,7 +411,7 @@ class PlantillaMaterial(models.Model):
     class Meta:
         unique_together = ('plantilla', 'material')
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.plantilla.nombre} - {self.material.nombre}"
 
 
@@ -456,7 +422,7 @@ class PartePatron(models.Model):
     geometria = models.JSONField(blank=True, null=True)
     observaciones = models.TextField(blank=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.nombre_parte} ({self.patron_base.nombre})"
     
 class DxfFile(models.Model):
@@ -488,7 +454,6 @@ class ExportArtifact(models.Model):
         help_text="Tipo de artefacto exportado"
     )
 
-    # Campo 'path' como string; si prefieres FileField puedes cambiarlo después.
     path = models.CharField(
         max_length=1024,
         help_text="Ruta o identificador del archivo exportado (p.ej. S3 key, path local)"
@@ -517,10 +482,6 @@ class ExportArtifact(models.Model):
         return f"ExportArtifact ({self.kind}) - cfg:{cfg_id} - {self.path}"
 
 class MeasurementSchema(models.Model):
-    """
-    Catálogo maestro de medidas disponibles y sus reglas de validación.
-    Ejemplo: bust, waist, hip, etc.
-    """
     code = models.CharField(
         max_length=50,
         unique=True,
@@ -567,5 +528,3 @@ class MeasurementSchema(models.Model):
 
     def __str__(self):
         return f"{self.display_name} ({self.code})"
-
-
