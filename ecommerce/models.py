@@ -1,6 +1,6 @@
 from django.db import models
 from designbetter.models import *
-from patronaje.models import PlantillaPrenda
+from patronaje.models import PlantillaPrenda, Configuration
 
 class EstadoPedido(models.Model):
     """
@@ -57,19 +57,11 @@ class PedidoPersonalizado(models.Model):
         related_name='pedidos_como_disenador',
         help_text="Diseñador asignado al pedido"
     )
-    plantilla = models.ForeignKey(
-        PlantillaPrenda,
-        on_delete=models.CASCADE,
-        related_name='pedidos_personalizados'
+    configuration = models.ForeignKey(
+        Configuration,
+        on_delete=models.PROTECT,
+        related_name='pedidos'
     )
-    #material = models.ForeignKey(
-       # Material,
-      #  on_delete=models.CASCADE,
-     #   related_name='pedidos_personalizados'
-    #)
-    color = models.CharField(max_length=50)
-    ajustes = models.TextField(blank=True)
-    notas = models.TextField(blank=True)
     estado = models.ForeignKey(
         'ecommerce.EstadoPedido',
         on_delete=models.PROTECT,
@@ -157,3 +149,75 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.title or 'Reseña'} — {self.rating}/5 por {self.reviewer_name}"
+
+from decimal import Decimal
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+class PricingRuleScope(models.TextChoices):
+    TEMPLATE = 'template', _('Template')
+    PATTERN  = 'pattern',  _('Pattern')
+    GLOBAL   = 'global',   _('Global')
+
+class PricingRule(models.Model):
+    name  = models.CharField(max_length=150)
+    scope = models.CharField(max_length=10, choices=PricingRuleScope.choices, db_index=True)
+
+    target_template = models.ForeignKey(
+        'patronaje.PlantillaPrenda',
+        on_delete=models.CASCADE,
+        null=True, blank=True,
+        related_name='pricing_rules',
+        help_text="Solo si scope='template'"
+    )
+    target_pattern = models.ForeignKey(
+        'patronaje.PatronBase',
+        on_delete=models.CASCADE,
+        null=True, blank=True,
+        related_name='pricing_rules',
+        help_text="Solo si scope='pattern'"
+    )
+
+    condition = models.JSONField(default=dict, blank=True)
+    action    = models.JSONField(default=dict, blank=True)
+
+    priority  = models.IntegerField(default=0, db_index=True)
+    valid_from = models.DateTimeField(null=True, blank=True)
+    valid_to   = models.DateTimeField(null=True, blank=True)
+    stop       = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['priority','id']
+        indexes  = [
+            models.Index(fields=['scope','priority']),
+            models.Index(fields=['target_template','priority']),
+            models.Index(fields=['target_pattern','priority']),
+        ]
+        verbose_name = "Regla de Precio"
+        verbose_name_plural = "Reglas de Precio"
+
+    def __str__(self):
+        base = self.name or f"Regla {self.pk}"
+        if self.scope == PricingRuleScope.TEMPLATE and self.target_template_id:
+            return f"{base} [template:{self.target_template_id}]"
+        if self.scope == PricingRuleScope.PATTERN and self.target_pattern_id:
+            return f"{base} [pattern:{self.target_pattern_id}]"
+        return f"{base} [global]"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.scope == PricingRuleScope.TEMPLATE:
+            if not self.target_template_id:
+                raise ValidationError("target_template es obligatorio cuando scope='template'.")
+            if self.target_pattern_id:
+                raise ValidationError("No mezclar target_template y target_pattern.")
+        elif self.scope == PricingRuleScope.PATTERN:
+            if not self.target_pattern_id:
+                raise ValidationError("target_pattern es obligatorio cuando scope='pattern'.")
+            if self.target_template_id:
+                raise ValidationError("No mezclar target_template y target_pattern.")
+        else:  # global
+            if self.target_template_id or self.target_pattern_id:
+                raise ValidationError("Global no debe tener target_* asignado.")
