@@ -4,7 +4,6 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'patrones', PatronBaseViewSet, basename='patrones')  # Añadido basename
-router.register(r'partes', PartePatronViewSet, basename='partes')
 router.register(r'plantillas', PlantillaPrendaViewSet)
 
 urlpatterns = [
@@ -15,6 +14,5 @@ urlpatterns = [
      
     # Router URLs (patrones/, partes/, usuarios/)
     path('', include(router.urls)),
-    path('crear-patron/', CrearPatronView.as_view(), name='crear-patron'),
     path('api/patron/<int:patron_id>/svg/', patron_svg_view, name='patron_svg'),
 ]
