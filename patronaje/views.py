@@ -10,6 +10,30 @@ from .serializers import PatronBaseSerializer, PartePatronSerializer, PlantillaP
 from .utils import convert_dxf_to_svg, generar_svg_para_patron
 import json
 
+from rest_framework.response import Response
+
+class TemplateRecommendationView(APIView):
+    def get(self, request):
+        mt_id = request.query_params.get('measurement_table_id')
+        top_k = int(request.query_params.get('top_k', 12))
+        category = request.query_params.get('category')
+        gender = request.query_params.get('gender')
+
+        # 1) Garantizar que la tabla tiene vector (si no, construirlo en servicio)
+        #ensure_measurement_vector(mt_id)
+
+        # 2) Ejecutar SQL (el CTE anterior) con filtros opcionales
+        #rows = run_recommendation_sql(mt_id, top_k, category, gender)
+
+        # 3) Construir payload con "reasons" y 1–3 ejemplos más cercanos por plantilla
+        results = []# enrich_with_examples_and_params(rows, mt_id)
+
+        return Response({
+            "measurement_table_id": mt_id,
+            "top_k": top_k,
+            "results": results
+        })
+
 class DxfFileUploadView(APIView):
     def post(self, request):
         serializer = DxfFileSerializer(data=request.data)
