@@ -1,4 +1,4 @@
-# apps/catalog/migrations/000Y_vectors.py
+# migrations/000Y_vectors.py
 from django.db import migrations
 
 OPS = [

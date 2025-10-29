@@ -12,28 +12,32 @@ import json
 
 from rest_framework.response import Response
 
+from .recomendation_utils import recommend_templates, upsert_measurement_table_vec
+from .models import MeasurementTable
 class TemplateRecommendationView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        mt_id = request.query_params.get('measurement_table_id')
-        top_k = int(request.query_params.get('top_k', 12))
-        category = request.query_params.get('category')
-        gender = request.query_params.get('gender')
+        mt_id = request.query_params.get("measurement_table_id")
+        if not mt_id:
+            return Response({"detail":"measurement_table_id is required"}, status=400)
+        top_k = int(request.query_params.get("top_k", 12))
+        category = request.query_params.get("category")
 
-        # 1) Garantizar que la tabla tiene vector (si no, construirlo en servicio)
-        #ensure_measurement_vector(mt_id)
-
-        # 2) Ejecutar SQL (el CTE anterior) con filtros opcionales
-        #rows = run_recommendation_sql(mt_id, top_k, category, gender)
-
-        # 3) Construir payload con "reasons" y 1–3 ejemplos más cercanos por plantilla
-        results = []# enrich_with_examples_and_params(rows, mt_id)
-
+        # Asegura que el vector existe (si esta tabla se editó recientemente)
+        try:
+            mt = MeasurementTable.objects.get(pk=mt_id)
+        except MeasurementTable.DoesNotExist:
+            return Response({"detail":"measurement_table not found"}, status=404)
+        upsert_measurement_table_vec(mt)
+        
+        results = recommend_templates(mt.id, top_k=top_k, category=category)
         return Response({
-            "measurement_table_id": mt_id,
+            "measurement_table_id": mt.id,
             "top_k": top_k,
             "results": results
         })
-
+    
 class DxfFileUploadView(APIView):
     def post(self, request):
         serializer = DxfFileSerializer(data=request.data)

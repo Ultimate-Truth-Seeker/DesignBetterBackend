@@ -1,4 +1,4 @@
-# apps/catalog/migrations/000X_pgvector.py
+#migrations/000X_pgvector.py
 from django.db import migrations
 
 SQL_ENABLE = "CREATE EXTENSION IF NOT EXISTS vector;"
