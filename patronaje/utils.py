@@ -1,4 +1,7 @@
 import math
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .models import *
 SVG_WIDTH = 1000
@@ -75,7 +78,7 @@ def generar_svg_para_patron(patron_id):
         grupo_svg = parte_to_svg_element(parte, dwg)
         dwg.add(grupo_svg)
     svg_string = dwg.tostring()
-    print(f"SVG generado correctamente")
+    logger.info("SVG generado correctamente")
     return svg_string
 
 def convert_dxf_to_svg(dxf_path):
@@ -107,5 +110,5 @@ def convert_dxf_to_svg(dxf_path):
             dwg.add(convert_arc(entity, dwg))
             
     svg_string = dwg.tostring()
-    print(f"SVG generado")
+    logger.info("SVG generado")
     return svg_string
