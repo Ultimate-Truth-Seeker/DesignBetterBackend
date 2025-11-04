@@ -157,8 +157,8 @@ STATIC_URL = '/static/'
 FRONTEND_DOMAIN = "http://localhost:3000" if DEBUG else "https://designbetter.vercel.app"
 
 if not DEBUG:
-#    SESSION_COOKIE_SECURE = True
- #   CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
     # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
