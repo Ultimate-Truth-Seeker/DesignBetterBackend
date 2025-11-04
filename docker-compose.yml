@@ -11,6 +11,9 @@ services:
       DATABASE_PASSWORD: "mi_password"
       DATABASE_HOST: "db"
       DATABASE_PORT: "5432"
+      SECRET_KEY: 'django-insecure-kje)0pkbbfljcb$gq(tbwrqxbzcunckck5c%iaz1wb5u_d7wjs'
+      EMAIL_HOST_PASSWORD: 'yrft ipff ofoh ohbo'
+      DB_URL: "postgresql://adminpg:WpM3lNKtxFH3L1fUBJI2XmZoRFdk8tDs@dpg-d44nr2euk2gs73fiqa30-a.oregon-postgres.render.com/dbdb_t7qp"
     depends_on:
       db:
         condition: service_healthy

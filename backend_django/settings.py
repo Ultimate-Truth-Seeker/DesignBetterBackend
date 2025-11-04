@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url 
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kje)0pkbbfljcb$gq(tbwrqxbzcunckck5c%iaz1wb5u_d7wjs'
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ["localhost", "backend"]
+ALLOWED_HOSTS = ["localhost", "backend", "127.0.0.1"]
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
 # Application definition
@@ -61,6 +65,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,12 +104,16 @@ WSGI_APPLICATION = 'backend_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mi_db',
-        'USER': 'mi_usuario',
-        'PASSWORD': 'mi_password',
-        'HOST': 'db',
-        'PORT': '5432',
-    }
+        'NAME': os.getenv("DATABASE_NAME"),
+        'USER': os.getenv("DATABASE_USER"),
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': os.getenv("DATABASE_HOST"),
+        'PORT': os.getenv("DATABASE_PORT"),
+    } if DEBUG else dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default=os.getenv("DB_URL"),
+        conn_max_age=600
+    )
 }
 
 
@@ -145,6 +154,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+FRONTEND_DOMAIN = "http://localhost:3000" if DEBUG else "https://designbetter.vercel.app"
+
+if not DEBUG:
+#    SESSION_COOKIE_SECURE = True
+ #   CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -175,13 +196,15 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True  # Activa TLS para conexiones seguras
 
 EMAIL_HOST_USER = 'equipodedesignbetter@gmail.com'
-EMAIL_HOST_PASSWORD = 'yrft ipff ofoh ohbo'
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-CORS_ALLOW_ALL_ORIGINS = True  # o 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+#CORS_ALLOW_ALL_ORIGINS = True  # o 
+CORS_ALLOWED_ORIGINS = [FRONTEND_DOMAIN]
 CORS_ALLOWED_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    FRONTEND_DOMAIN,
+]
 
-FRONTEND_DOMAIN = "http://localhost:3000"
 
 
 SITE_ID = 1
