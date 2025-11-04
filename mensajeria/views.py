@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversacion, Mensaje
 from .serializers import ConversacionSerializer, MensajeSerializer
-from backend_django.apps.usuarios.models import Usuario
+from designbetter.models import Usuario
 import mimetypes
 from django.http import FileResponse, HttpResponseRedirect, Http404
 from django.core.files.storage import default_storage
