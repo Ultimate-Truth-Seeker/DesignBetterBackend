@@ -5,5 +5,7 @@ pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
 
+python manage.py shell < socialscript.py
 python manage.py shell < settingshealth.py
+
 #python manage.py migrate #deleted temporarily because the database supposedly already has migrations

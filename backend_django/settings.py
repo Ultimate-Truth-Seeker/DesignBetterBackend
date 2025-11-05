@@ -190,12 +190,12 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = 'equipodedesignbetter@gmail.com' #'noreply@designbetter.com'
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_DIR")#'equipodedesignbetter@gmail.com' #'noreply@designbetter.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587 
 EMAIL_USE_TLS = True  # Activa TLS para conexiones seguras
 
-EMAIL_HOST_USER = 'equipodedesignbetter@gmail.com'
+EMAIL_HOST_USER = DEFAULT_FROM_EMAIL#'equipodedesignbetter@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 #CORS_ALLOW_ALL_ORIGINS = True  # o 
