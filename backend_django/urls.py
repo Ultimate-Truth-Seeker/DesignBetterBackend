@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views import (
 from designbetter.admin import admin_site
 urlpatterns = [
     path('admin/', admin_site.urls),
-    #path('accounts/', include('allauth.urls')),  # interfaz de allauth
+    path('accounts/', include('allauth.urls')),  # interfaz de allauth
     #path('social/', include('allauth.socialaccount.urls')),  # endpoints de redes sociales
     path('auth/', include('designbetter.urls')),
     path('orders/', include('ecommerce.urls')),
