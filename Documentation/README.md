@@ -1,1052 +1,532 @@
+<div align="center">
 
-<div  align="center">
+# DesignBetter Backend
 
-  
-
-# 🎨 DesignBetter Backend
-
-  
-
-### Backend robusto para la plataforma Design Better
-
-  
+### Robust backend for the Design Better platform
 
 [![Last Commit](https://img.shields.io/github/last-commit/Ultimate-Truth-Seeker/DesignBetterBackend?color=blue&label=last%20commit)](https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend)
-
 [![Python](https://img.shields.io/badge/python-97.7%25-blue)](https://www.python.org/)
-
 [![Languages](https://img.shields.io/github/languages/count/Ultimate-Truth-Seeker/DesignBetterBackend?color=brightgreen&label=languages)](https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend)
-
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-  
-
-**[Documentación](https://designbetterbackend.onrender.com/admin/)** • **[Demo en Producción](https://designbetterbackend.onrender.com/)** • **[Reportar Bug](https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend/issues)**
-
-  
+**[Documentation](https://designbetterbackend.onrender.com/admin/)** • **[Production Demo](https://designbetterbackend.onrender.com/)** • **[Report Bug](https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend/issues)**
 
 </div>
 
-  
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Testing](#testing)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-  
+## Features
 
-## 📋 Tabla de Contenidos
+**Robust Authentication**
+- Custom user system with Django
+- JWT (JSON Web Tokens) for stateless authentication
+- Integration with django-allauth for social login (Google, Facebook, etc.)
+- Access tokens (30 min) and refresh tokens (1 day)
 
-  
+**E-commerce Engine**
+- Complete order management system
+- Dynamic pricing engine (`pricing_engine.py`)
+- REST APIs for order processing
 
-- [Características](#-características)
+**Intelligent Recommendations**
+- Vector database with pgvector
+- Pattern/template recommendation system
+- Semantic similarity search
 
-- [Stack Tecnológico](#️-stack-tecnológico)
+**Containerization**
+- Fully dockerized
+- Docker Compose for local development
+- Custom `devnetwork` network
 
-- [Inicio Rápido](#-inicio-rápido)
-
-- [Instalación](#-instalación)
-
-- [Configuración](#️-configuración)
-
-- [Uso](#-uso)
-
-- [Testing](#-testing)
-
-- [Estructura del Proyecto](#️-estructura-del-proyecto)
-
-- [API Endpoints](#-api-endpoints)
-
-- [Contribuir](#-contribuir)
-
-- [Licencia](#-licencia)
-
-  
+**Messaging System**
+- Gmail SMTP integration
+- Internal messaging app
 
 ---
 
-  
+## Tech Stack
 
-## ✨ Características
-
-  
-
-🔐 **Autenticación Robusta**
-
-- Sistema de usuarios personalizado con Django
-
-- JWT (JSON Web Tokens) para autenticación stateless
-
-- Integración con django-allauth para login social (Google, Facebook, etc.)
-
-- Tokens de acceso (30 min) y refresh (1 día)
-
-  
-
-🛍️ **Motor de E-commerce**
-
-- Sistema completo de gestión de órdenes
-
-- Motor de precios dinámico (`pricing_engine.py`)
-
-- APIs REST para procesamiento de pedidos
-
-  
-
-🎯 **Recomendaciones Inteligentes**
-
-- Base de datos vectorial con pgvector
-
-- Sistema de recomendación de patrones/templates
-
-- Búsqueda por similitud semántica
-
-  
-
-🐳 **Containerización**
-
-- Completamente dockerizado
-
-- Docker Compose para desarrollo local
-
-- Red personalizada `devnetwork`
-
-  
-
-📧 **Sistema de Mensajería**
-
-- Integración con Gmail SMTP
-
-- App de mensajería interna
-
-  
-
----
-
-  
-
-## 🛠️ Stack Tecnológico
-
-  
-
-<div  align="center">
-
-  
+<div align="center">
 
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
-
 ![Django REST](https://img.shields.io/badge/Django_REST-ff1709?style=for-the-badge&logo=django&logoColor=white)
-
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-
 ![Python](https://img.shields.io/badge/Python_3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
-
-  
 
 </div>
 
-  
+### Main Dependencies
 
-### Dependencias Principales
-
-  
-
--  **Django 4.x** - Framework web
-
--  **Django REST Framework** - APIs RESTful
-
--  **SimpleJWT** - Autenticación JWT
-
--  **django-allauth** - Autenticación social
-
--  **PostgreSQL + pgvector** - Base de datos con búsqueda vectorial
-
--  **NumPy** - Procesamiento numérico para recomendaciones
-
--  **Docker & Docker Compose** - Containerización
-
-  
+- **Django 4.x** - Web framework
+- **Django REST Framework** - RESTful APIs
+- **SimpleJWT** - JWT authentication
+- **django-allauth** - Social authentication
+- **PostgreSQL + pgvector** - Database with vector search
+- **NumPy** - Numerical processing for recommendations
+- **Docker & Docker Compose** - Containerization
 
 ---
 
-  
-
-## 🚀 Inicio Rápido
-
-  
+## Quick Start
 
 ```bash
+# 1. Clone the repository
+git clone https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend.git
+cd DesignBetterBackend
 
-# 1. Clonar el repositorio
+# 2. Create Docker network
+docker network create devnetwork
 
-git  clone  https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend.git
+# 3. Start services
+docker compose up --build
 
-cd  DesignBetterBackend
-
-  
-
-# 2. Crear la red de Docker
-
-docker  network  create  devnetwork
-
-  
-
-# 3. Iniciar servicios
-
-docker  compose  up  --build
-
-  
-
-# 4. Acceder a la aplicación
-
+# 4. Access the application
 # Backend API: http://localhost:8000
-
 # Admin Panel: http://localhost:8000/admin/
-
 ```
 
-  
-
-¡Listo! El backend estará ejecutándose con migraciones y fixtures cargados automáticamente.
-
-  
+Ready! The backend will be running with migrations and fixtures loaded automatically.
 
 ---
 
-  
+## Installation
 
-## 💾 Instalación
+### Option A: With Docker (Recommended)
 
-  
-
-### Opción A: Con Docker (Recomendado)
-
-  
-
-**Prerequisitos:**
-
+**Prerequisites:**
 - Docker 20.x+
-
 - Docker Compose 2.x+
-
 - Git
 
-  
-
-**Pasos:**
-
-  
+**Steps:**
 
 ```bash
+# Create Docker network
+docker network create devnetwork
 
-# Crear red de Docker
-
-docker  network  create  devnetwork
-
-  
-
-# Construir e iniciar contenedores
-
-docker  compose  up  --build
-
+# Build and start containers
+docker compose up --build
 ```
 
-  
+The backend service:
+- Runs migrations automatically
+- Loads initial fixtures
+- Starts server on `0.0.0.0:8000`
 
-El servicio backend:
-
-- ✅ Ejecuta migraciones automáticamente
-
-- ✅ Carga fixtures iniciales
-
-- ✅ Inicia servidor en `0.0.0.0:8000`
-
-  
-
-**Servicios disponibles:**
-
-- 🌐 Backend: `http://localhost:8000`
-
-- 🗄️ PostgreSQL: `localhost:5434` (host) / `db:5432` (contenedor)
-
-  
+**Available services:**
+- Backend: `http://localhost:8000`
+- PostgreSQL: `localhost:5434` (host) / `db:5432` (container)
 
 ---
 
-  
+### Option B: Local Installation
 
-### Opción B: Instalación Local
-
-  
-
-**Prerequisitos:**
-
+**Prerequisites:**
 - Python 3.11+
+- PostgreSQL 14+ with pgvector extension
+- pip and virtualenv
 
-- PostgreSQL 14+ con extensión pgvector
-
-- pip y virtualenv
-
-  
-
-**Pasos:**
-
-  
+**Steps:**
 
 ```bash
+# 1. Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# 1. Crear entorno virtual
+# 2. Install dependencies
+pip install -r requirements.txt
 
-python  -m  venv  venv
+# 3. Configure environment variables (see Configuration section)
+cp .env.example .env
+# Edit .env with your values
 
-source  venv/bin/activate  # En Windows: venv\Scripts\activate
+# 4. Run migrations
+python manage.py makemigrations
+python manage.py migrate
 
-  
+# 5. Load initial data (optional)
+python manage.py shell < fixtures.py
 
-# 2. Instalar dependencias
+# 6. Create superuser
+python manage.py createsuperuser
 
-pip  install  -r  requirements.txt
-
-  
-
-# 3. Configurar variables de entorno (ver sección Configuración)
-
-cp  .env.example  .env
-
-# Editar .env con tus valores
-
-  
-
-# 4. Ejecutar migraciones
-
-python  manage.py  makemigrations
-
-python  manage.py  migrate
-
-  
-
-# 5. Cargar datos iniciales (opcional)
-
-python  manage.py  shell < fixtures.py
-
-  
-
-# 6. Crear superusuario
-
-python  manage.py  createsuperuser
-
-  
-
-# 7. Iniciar servidor
-
-python  manage.py  runserver  0.0.0.0:8000
-
+# 7. Start server
+python manage.py runserver 0.0.0.0:8000
 ```
-
-  
 
 ---
 
-  
+## Configuration
 
-## ⚙️ Configuración
+### Environment Variables
 
-  
+Create a `.env` file at the project root:
 
-### Variables de Entorno
+| Variable | Description | Example | Required |
+|----------|-------------|---------|----------|
+| `SECRET_KEY` | Django secret key | `your-secret-key-here` | Yes |
+| `DEBUG` | Debug mode (auto-detected) | `True` / `False` | Warning |
+| `DATABASE_NAME` | DB name (DEBUG mode) | `designbetter_db` | Yes |
+| `DATABASE_USER` | PostgreSQL user | `postgres` | Yes |
+| `DATABASE_PASSWORD` | PostgreSQL password | `yourpassword` | Yes |
+| `DATABASE_HOST` | DB host | `localhost` / `db` | Yes |
+| `DATABASE_PORT` | PostgreSQL port | `5432` | Yes |
+| `DB_URL` | Complete URL (production) | `postgresql://user:pass@host:port/db` | Production |
+| `EMAIL_HOST_DIR` | Sender email | `noreply@example.com` | Yes |
+| `EMAIL_HOST_PASSWORD` | Gmail SMTP password | `your-app-password` | Yes |
+| `FRONTEND_DOMAIN` | Frontend domain | `http://localhost:3000` | Warning |
 
-  
+**Notes:**
+- `DEBUG` is `True` when `RENDER` is not configured
+- In production, use `DB_URL` instead of `DATABASE_*`
+- `FRONTEND_DOMAIN` defaults to: `http://localhost:3000` (dev) / `https://designbetter.vercel.app` (prod)
 
-Crea un archivo `.env` en la raíz del proyecto:
-
-  
-
-| Variable | Descripción | Ejemplo | Requerido |
-
-|----------|-------------|---------|-----------|
-
-| `SECRET_KEY` | Clave secreta de Django | `your-secret-key-here` | ✅ |
-
-| `DEBUG` | Modo debug (auto-detectado) | `True` / `False` | ⚠️ |
-
-| `DATABASE_NAME` | Nombre de la BD (modo DEBUG) | `designbetter_db` | ✅ |
-
-| `DATABASE_USER` | Usuario PostgreSQL | `postgres` | ✅ |
-
-| `DATABASE_PASSWORD` | Contraseña PostgreSQL | `yourpassword` | ✅ |
-
-| `DATABASE_HOST` | Host de la BD | `localhost` / `db` | ✅ |
-
-| `DATABASE_PORT` | Puerto de PostgreSQL | `5432` | ✅ |
-
-| `DB_URL` | URL completa (producción) | `postgresql://user:pass@host:port/db` | Producción |
-
-| `EMAIL_HOST_DIR` | Email del remitente | `noreply@example.com` | ✅ |
-
-| `EMAIL_HOST_PASSWORD` | Contraseña SMTP Gmail | `your-app-password` | ✅ |
-
-| `FRONTEND_DOMAIN` | Dominio del frontend | `http://localhost:3000` | ⚠️ |
-
-  
-
-**Notas:**
-
--  `DEBUG` es `True` cuando `RENDER` no está configurado
-
-- En producción, usa `DB_URL` en lugar de `DATABASE_*`
-
--  `FRONTEND_DOMAIN` por defecto: `http://localhost:3000` (dev) / `https://designbetter.vercel.app` (prod)
-
-  
-
-### Configuración de JWT
-
-  
+### JWT Configuration
 
 ```python
-
-# Token de acceso: 30 minutos
-
-# Token de refresh: 1 día
-
-# Algoritmo: HS256
-
+# Access token: 30 minutes
+# Refresh token: 1 day
+# Algorithm: HS256
 ```
 
-  
+### CORS and CSRF
 
-### CORS y CSRF
-
-  
-
-- CORS habilitado para `FRONTEND_DOMAIN`
-
-- Credenciales permitidas
-
-- Cookies SameSite=None en producción
-
-  
+- CORS enabled for `FRONTEND_DOMAIN`
+- Credentials allowed
+- SameSite=None cookies in production
 
 ---
 
-  
+## Usage
 
-## 📖 Uso
+### Admin Panel
 
-  
-
-### Panel de Administración
-
-  
-
-Accede al admin de Django:
-
-  
+Access Django admin:
 
 ```
-
 URL: http://localhost:8000/admin/
-
-Usuario: (creado con createsuperuser)
-
+User: (created with createsuperuser)
 ```
 
-  
+### Main Endpoints
 
-### Endpoints Principales
-
-  
-
-#### Autenticación (`/auth/`)
-
+#### Authentication (`/auth/`)
 ```bash
-
-# Registro
-
-POST  /auth/register/
-
-  
+# Registration
+POST /auth/register/
 
 # Login
-
-POST  /auth/login/
-
-  
+POST /auth/login/
 
 # Refresh token
-
-POST  /auth/token/refresh/
-
+POST /auth/token/refresh/
 ```
 
-  
-
-#### Autenticación Social (`/accounts/`)
-
+#### Social Authentication (`/accounts/`)
 ```bash
-
-# Login con Google, Facebook, etc.
-
-GET  /accounts/google/login/
-
+# Login with Google, Facebook, etc.
+GET /accounts/google/login/
 ```
 
-  
-
-#### Órdenes (`/orders/`)
-
+#### Orders (`/orders/`)
 ```bash
+# List orders
+GET /orders/
 
-# Listar órdenes
+# Create order
+POST /orders/
 
-GET  /orders/
-
-  
-
-# Crear orden
-
-POST  /orders/
-
-  
-
-# Detalle de orden
-
-GET  /orders/{id}/
-
+# Order detail
+GET /orders/{id}/
 ```
-
-  
 
 #### Templates (`/templates/`)
-
 ```bash
+# List templates
+GET /templates/
 
-# Listar templates
-
-GET  /templates/
-
-  
-
-# Recomendaciones basadas en vectores
-
-GET  /templates/recommendations/
-
+# Vector-based recommendations
+GET /templates/recommendations/
 ```
 
-  
+### Media Files
 
-### Archivos Media
-
-  
-
-En desarrollo, los archivos media se sirven desde:
-
+In development, media files are served from:
 ```
-
 http://localhost:8000/media/
-
 ```
-
-  
 
 ---
 
-  
+## Testing
 
-## 🧪 Testing
-
-  
-
-### Ejecutar Tests
-
-  
+### Run Tests
 
 ```bash
+# All tests
+python manage.py test
 
-# Todos los tests
+# Tests for a specific app
+python manage.py test designbetter
+python manage.py test ecommerce
+python manage.py test patronaje
 
-python  manage.py  test
-
-  
-
-# Tests de una app específica
-
-python  manage.py  test  designbetter
-
-python  manage.py  test  ecommerce
-
-python  manage.py  test  patronaje
-
-  
-
-# Tests de integración
-
-python  manage.py  test  backend_django.test_integration
-
+# Integration tests
+python manage.py test backend_django.test_integration
 ```
 
-  
-
-### Estructura de Tests
-
-  
+### Test Structure
 
 ```
-
-designbetter/tests.py # Tests de autenticación y usuarios
-
-ecommerce/tests.py # Tests del motor de e-commerce
-
-patronaje/tests.py # Tests de templates y recomendaciones
-
-backend_django/test_integration.py # Tests de integración
-
+designbetter/tests.py    # Authentication and user tests
+ecommerce/tests.py       # E-commerce engine tests
+patronaje/tests.py       # Template and recommendation tests
+backend_django/test_integration.py  # Integration tests
 ```
 
-  
-
-### Coverage (opcional)
-
-  
+### Coverage (optional)
 
 ```bash
-
-pip  install  coverage
-
-coverage  run  --source='.'  manage.py  test
-
-coverage  report
-
-coverage  html  # Genera reporte HTML en htmlcov/
-
+pip install coverage
+coverage run --source='.' manage.py test
+coverage report
+coverage html  # Generates HTML report in htmlcov/
 ```
-
-  
 
 ---
 
-  
-
-## 🗂️ Estructura del Proyecto
-
-  
+## Project Structure
 
 ```
-
 DesignBetterBackend/
-
 │
-
-├── 📁 backend_django/ # Configuración principal
-
-│ ├── settings.py # Configuración Django (env-driven)
-
-│ ├── urls.py # Rutas principales
-
-│ ├── wsgi.py / asgi.py # Entry points WSGI/ASGI
-
-│ └── test_integration.py # Tests de integración
-
+├── backend_django/             # Main configuration
+│   ├── settings.py             # Django config (env-driven)
+│   ├── urls.py                 # Main routes
+│   ├── wsgi.py / asgi.py       # WSGI/ASGI entry points
+│   └── test_integration.py     # Integration tests
 │
-
-├── 📁 designbetter/ # App principal - Usuarios y Auth
-
-│ ├── models.py # Modelo de usuario personalizado
-
-│ ├── serializers.py # Serializers DRF
-
-│ ├── views.py # Vistas de autenticación
-
-│ ├── urls.py # Rutas de auth
-
-│ ├── admin.py # Configuración admin
-
-│ └── tests.py # Tests unitarios
-
+├── designbetter/               # Main app - Users and Auth
+│   ├── models.py               # Custom user model
+│   ├── serializers.py          # DRF serializers
+│   ├── views.py                # Authentication views
+│   ├── urls.py                 # Auth routes
+│   ├── admin.py                # Admin configuration
+│   └── tests.py                # Unit tests
 │
-
-├── 📁 ecommerce/ # Sistema de órdenes
-
-│ ├── models.py # Modelos de Order, OrderItem
-
-│ ├── serializers.py # Serializers de órdenes
-
-│ ├── views.py # API de órdenes
-
-│ ├── urls.py # Rutas de órdenes
-
-│ ├── pricing_engine.py # Lógica de precios
-
-│ └── tests.py # Tests de e-commerce
-
+├── ecommerce/                  # Order system
+│   ├── models.py               # Order, OrderItem models
+│   ├── serializers.py          # Order serializers
+│   ├── views.py                # Order API
+│   ├── urls.py                 # Order routes
+│   ├── pricing_engine.py       # Pricing logic
+│   └── tests.py                # E-commerce tests
 │
-
-├── 📁 patronaje/ # Templates y Recomendaciones
-
-│ ├── models.py # Modelos con campos vectoriales
-
-│ ├── views.py # API de templates
-
-│ ├── urls.py # Rutas de templates
-
-│ ├── recomendation_utils.py # Algoritmos de recomendación
-
-│ ├── tests.py # Tests de patronaje
-
-│ ├── 📁 management/
-
-│ │ └── 📁 commands/
-
-│ │ └── backfill_vectors.py # Comando para poblar vectores
-
-│ └── 📁 migrations/
-
-│ └── pgvector setup
-
+├── patronaje/                  # Templates and Recommendations
+│   ├── models.py               # Models with vector fields
+│   ├── views.py                # Template API
+│   ├── urls.py                 # Template routes
+│   ├── recomendation_utils.py  # Recommendation algorithms
+│   ├── tests.py                # Pattern tests
+│   ├── management/
+│   │   └── commands/
+│   │       └── backfill_vectors.py  # Command to populate vectors
+│   └── migrations/
+│       └── pgvector setup
 │
-
-├── 📁 mensajeria/ # Sistema de mensajería
-
-│ ├── models.py
-
-│ ├── views.py
-
-│ └── urls.py
-
+├── mensajeria/                 # Messaging system
+│   ├── models.py
+│   ├── views.py
+│   └── urls.py
 │
-
-├── 📁 templates/
-
-│ └── 📁 admin/ # Templates personalizados del admin
-
+├── templates/
+│   └── admin/                  # Custom admin templates
 │
-
-├── 📁 media/ # Archivos subidos (gitignored)
-
-├── 📁 static/ # Archivos estáticos
-
+├── media/                      # Uploaded files (gitignored)
+├── static/                     # Static files
 │
-
-├── 🐳 docker-compose.yml # Orquestación de contenedores
-
-├── 🐳 Dockerfile # Imagen Python 3.11-slim
-
-├── 📦 requirements.txt # Dependencias Python
-
-├── 🔧 manage.py # CLI de Django
-
-├── 📋 fixtures.py # Datos iniciales
-
-└── 📄 README.md # Esta documentación
-
+├── docker-compose.yml          # Container orchestration
+├── Dockerfile                  # Python 3.11-slim image
+├── requirements.txt            # Python dependencies
+├── manage.py                   # Django CLI
+├── fixtures.py                 # Initial data
+└── README.md                   # This documentation
 ```
-
-  
 
 ---
 
-  
+## API Endpoints
 
-## 🌐 API Endpoints
+### Route Summary
 
-  
+| Category | Base Route | Description |
+|----------|------------|-------------|
+| Admin | `/admin/` | Django admin panel |
+| Custom Auth | `/auth/` | Registration, login, JWT |
+| Social Auth | `/accounts/` | django-allauth (Google, Facebook) |
+| Orders | `/orders/` | Order CRUD |
+| Templates | `/templates/` | Pattern and recommendation management |
+| Media | `/media/` | Uploaded static files |
 
-### Resumen de Rutas
+### Detailed Documentation
 
-  
-
-| Categoría | Ruta Base | Descripción |
-
-|-----------|-----------|-------------|
-
-| Admin | `/admin/` | Panel de administración Django |
-
-| Autenticación Custom | `/auth/` | Registro, login, JWT |
-
-| Autenticación Social | `/accounts/` | django-allauth (Google, Facebook) |
-
-| Órdenes | `/orders/` | CRUD de órdenes |
-
-| Templates | `/templates/` | Gestión de patrones y recomendaciones |
-
-| Media | `/media/` | Archivos estáticos subidos |
-
-  
-
-### Documentación Detallada
-
-  
-
-Para documentación completa de la API, considera integrar:
-
--  **Swagger/OpenAPI**: Agrega `drf-spectacular`
-
--  **Redoc**: UI alternativa para docs
-
-  
+For complete API documentation, consider integrating:
+- **Swagger/OpenAPI**: Add `drf-spectacular`
+- **Redoc**: Alternative docs UI
 
 ```bash
+# Install (optional)
+pip install drf-spectacular
 
-# Instalar (opcional)
-
-pip  install  drf-spectacular
-
-  
-
-# Acceder a docs
-
+# Access docs
 http://localhost:8000/api/schema/swagger-ui/
-
 ```
-
-  
 
 ---
 
-  
-
-## 🏗️ Arquitectura
-
-  
+## Architecture
 
 ```
-
 ┌─────────────────┐
-
-│ Frontend │ (Next.js/React en Vercel)
-
-│ designbetter │
-
+│   Frontend      │ (Next.js/React on Vercel)
+│  designbetter   │
 └────────┬────────┘
-
-│ HTTPS/REST
-
-▼
-
+         │ HTTPS/REST
+         ▼
 ┌─────────────────┐
-
-│ Django Backend │ (Este Repositorio)
-
-│ + DRF + JWT │
-
+│  Django Backend │ (This Repository)
+│   + DRF + JWT   │
 └────────┬────────┘
-
-│
-
-┌────┴────┐
-
-▼ ▼
-
+         │
+    ┌────┴────┐
+    ▼         ▼
 ┌─────────┐ ┌──────────┐
-
-│PostgreSQL│ │ Gmail │
-
-│+ pgvector│ │ SMTP │
-
+│PostgreSQL│ │  Gmail   │
+│+ pgvector│ │  SMTP    │
 └──────────┘ └──────────┘
-
 ```
 
-  
-
-**Flujo de Datos:**
-
-1. Frontend envía peticiones REST con JWT
-
-2. Django valida token y procesa request
-
-3. PostgreSQL almacena datos + vectores para ML
-
-4. Sistema de recomendación usa pgvector para búsqueda semántica
-
-5. Notificaciones vía Gmail SMTP
-
-  
+**Data Flow:**
+1. Frontend sends REST requests with JWT
+2. Django validates token and processes request
+3. PostgreSQL stores data + vectors for ML
+4. Recommendation system uses pgvector for semantic search
+5. Notifications via Gmail SMTP
 
 ---
 
-  
+## Contributing
 
-## 🤝 Contribuir
+Contributions are welcome! Follow these steps:
 
-  
-
-¡Las contribuciones son bienvenidas! Sigue estos pasos:
-
-  
-
-### 1. Fork y Clone
-
-  
+### 1. Fork and Clone
 
 ```bash
-
-git  clone  https://github.com/TU_USUARIO/DesignBetterBackend.git
-
-cd  DesignBetterBackend
-
+git clone https://github.com/YOUR_USERNAME/DesignBetterBackend.git
+cd DesignBetterBackend
 ```
 
-  
-
-### 2. Crea una Rama
-
-  
+### 2. Create a Branch
 
 ```bash
-
-git  checkout  -b  feature/nueva-funcionalidad
-
+git checkout -b feature/new-feature
 ```
 
-  
+### 3. Make Your Changes
 
-### 3. Haz tus Cambios
+- Write clean and documented code
+- Add tests for new features
+- Follow PEP 8 for Python
+- Update documentation if needed
 
-  
-
-- Escribe código limpio y documentado
-
-- Agrega tests para nuevas funcionalidades
-
-- Sigue PEP 8 para Python
-
-- Actualiza documentación si es necesario
-
-  
-
-### 4. Ejecuta Tests
-
-  
+### 4. Run Tests
 
 ```bash
-
-python  manage.py  test
-
+python manage.py test
 ```
 
-  
-
-### 5. Commit y Push
-
-  
+### 5. Commit and Push
 
 ```bash
-
-git  add  .
-
-git  commit  -m  "✨ Agrega nueva funcionalidad X"
-
-git  push  origin  feature/nueva-funcionalidad
-
+git add .
+git commit -m "feat: add new feature X"
+git push origin feature/new-feature
 ```
 
-  
+### 6. Create a Pull Request
 
-### 6. Crea un Pull Request
+Go to GitHub and create a PR describing your changes.
 
-  
+### Style Guidelines
 
-Ve a GitHub y crea un PR describiendo tus cambios.
-
-  
-
-### Guías de Estilo
-
-  
-
--  **Python**: PEP 8
-
--  **Commits**: [Conventional Commits](https://www.conventionalcommits.org/)
-
--  **Branches**: `feature/`, `bugfix/`, `hotfix/`
-
-  
+- **Python**: PEP 8
+- **Commits**: [Conventional Commits](https://www.conventionalcommits.org/)
+- **Branches**: `feature/`, `bugfix/`, `hotfix/`
 
 ---
 
-  
+## License
 
-## 📄 Licencia
-
-  
-
-Este proyecto está bajo la Licencia MIT. Ver archivo [LICENSE](LICENSE) para más detalles.
-
-  
+This project is licensed under the MIT License. See [LICENSE](LICENSE) file for details.
 
 ```
-
 MIT License
-
-  
 
 Copyright (c) 2025 DesignBetter Team
 
-  
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
-
 of this software and associated documentation files...
-
 ```
-
-  
 
 ---
 
-## Autores
+## Authors
 
 - Pablo Méndez
 - Roberto Nájera
 - Luis Palacios
 - André Pivaral
 
-  
+---
 
-## 🙏 Agradecimientos
+## Acknowledgments
 
-  
-
-- Django y Django REST Framework community
-
-- PostgreSQL y pgvector maintainers
-
-- Todos los colaboradores del proyecto
-
-  
+- Django and Django REST Framework community
+- PostgreSQL and pgvector maintainers
+- All project contributors
 
 ---
 
+## Useful Links
 
-
-  
-
-## 🔗 Enlaces Útiles
-
-  
-
-- [Documentación de Django](https://docs.djangoproject.com/)
-
+- [Django Documentation](https://docs.djangoproject.com/)
 - [Django REST Framework](https://www.django-rest-framework.org/)
-
 - [PostgreSQL pgvector](https://github.com/pgvector/pgvector)
-
 - [Docker Docs](https://docs.docker.com/)
 
-  
-
 ---
 
-  
+<div align="center">
 
-<div  align="center">
+**If you found this project useful, consider giving it a star on GitHub**
 
-  
-
-**⭐ Si este proyecto te resultó útil, considera darle una estrella en GitHub ⭐**
-
-
-  
+Made with love by the DesignBetter team
 
 </div>
