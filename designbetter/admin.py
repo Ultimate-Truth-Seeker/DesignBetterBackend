@@ -62,7 +62,3 @@ admin_site.register(PlantillaPrenda)
 admin_site.register(Material)
 admin_site.register(PlantillaMaterial)
 admin_site.register(PartePatron)
-
-#TODO 
-
-

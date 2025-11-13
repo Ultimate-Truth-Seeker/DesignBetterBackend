@@ -995,17 +995,12 @@ of this software and associated documentation files...
 
 ---
 
-  
+## Autores
 
-## 👥 Autores
-
-  
-
--  **Ultimate Truth Seeker** - [GitHub](https://github.com/Ultimate-Truth-Seeker)
-
-  
-
----
+- Pablo Méndez
+- Roberto Nájera
+- Luis Palacios
+- André Pivaral
 
   
 
@@ -1023,21 +1018,7 @@ of this software and associated documentation files...
 
 ---
 
-  
 
-## 📞 Soporte
-
-  
-
-- 🐛 **Issues**: [GitHub Issues](https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend/issues)
-
-- 📧 **Email**: support@designbetter.com
-
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/Ultimate-Truth-Seeker/DesignBetterBackend/discussions)
-
-  
-
----
 
   
 
