@@ -9,3 +9,5 @@ python manage.py shell < socialscript.py
 python manage.py shell < settingshealth.py
 
 #python manage.py migrate #deleted temporarily because the database supposedly already has migrations
+
+python manage.py test designbetter
